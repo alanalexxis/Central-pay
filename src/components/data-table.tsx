@@ -82,21 +82,21 @@ export function DataTable<TData, TValue>({
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <Input
-          placeholder='Filter...'
-          // value={(table.getColumn("name_4603829743")?.getFilterValue() as string) ?? ""}
-          // onChange={(event) =>
-          //   table.getColumn("name_4603829743")?.setFilterValue(event.target.value)
-          // }
+          placeholder='Filtrar por nombre'
+          value={(table.getColumn('nombre')?.getFilterValue() as string) ?? ''}
+          onChange={(event) =>
+            table.getColumn('nombre')?.setFilterValue(event.target.value)
+          }
           className='max-w-sm'
         />
         <div className='flex items-center gap-4'>
           {Object.keys(rowSelection).length > 0 && (
             <Button onClick={handlemultiDelete} variant='destructive'>
-              Delete Selected ({Object.keys(rowSelection).length})
+              Eliminar seleccionados ({Object.keys(rowSelection).length})
             </Button>
           )}
 
-          <Button onClick={onAdd}>Add Item</Button>
+          <Button onClick={onAdd}>Añadir alumno</Button>
         </div>
       </div>
       <div className='rounded-md border'>
@@ -190,7 +190,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          Anterior
         </Button>
         <Button
           variant='outline'
@@ -198,7 +198,7 @@ export function DataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          Siguiente
         </Button>
       </div>
     </div>

@@ -16,37 +16,49 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { MyFormData } from '@/../types/table';
 
 const formSchema = z.object({
-  id: z.string(),
-  nombre: z.number(),
-  telefono: z.string().optional(),
-  fecha_nacimiento: z.string()
+  id: z.string().optional(),
+  nombre: z.string().nonempty('El campo nombre no puede estar vacío'),
+  telefono: z.string().nonempty('El campo teléfono no puede estar vacío'),
+  fecha_nacimiento: z
+    .string()
+    .nonempty('Selecciona la fecha de nacimiento del alumno')
 });
+// Add an interface for user form props
+interface MyFormProps {
+  onSubmit: (data: MyFormData) => void;
+  initialData?: MyFormData | null;
+}
 
-export default function MyForm() {
+export default function MyForm({ onSubmit, initialData }: MyFormProps) {
+  // Set default values for the form
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema)
+    resolver: zodResolver(formSchema),
+    defaultValues: initialData || {
+      nombre: '',
+      telefono: '',
+      fecha_nacimiento: ''
+    }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  //Add onSubmit on HandleSubmit function
+  function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log(values);
-      toast(
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      onSubmit(values as MyFormData);
+      form.reset();
+      toast.success('¡Éxito! Información guardada con éxito.');
     } catch (error) {
       console.error('Form submission error', error);
-      toast.error('Failed to submit the form. Please try again.');
+      toast.error('Error al guardar la información.');
     }
   }
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className='mx-auto max-w-3xl space-y-8 py-10'
       >
         <div className='grid grid-cols-12 gap-4'>
@@ -79,7 +91,7 @@ export default function MyForm() {
                   <FormControl>
                     <Input
                       placeholder='Ejemplo: 5551234567'
-                      type='number'
+                      type='text'
                       {...field}
                     />
                   </FormControl>
@@ -113,7 +125,7 @@ export default function MyForm() {
             />
           </div>
         </div>
-        <Button type='submit'>Guardar</Button>
+        <Button type='submit'>{initialData ? 'Actualizar' : 'Guardar'}</Button>
       </form>
     </Form>
   );
