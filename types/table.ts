@@ -1,5 +1,5 @@
 export interface MyFormData {
-  id: string;
+  idalumno: string;
   nombre: string;
   telefono: string;
   fecha_nacimiento: String;

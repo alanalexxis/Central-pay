@@ -42,15 +42,14 @@ export default function TablePage() {
   const handleUpdate = (updatedUser: MyFormData) => {
     setData(
       data.map((record) =>
-        record.id === updatedUser.id ? updatedUser : record
+        record.idalumno === updatedUser.idalumno ? updatedUser : record
       )
     );
     setIsDialogOpen(false);
     setEditingUser(null);
   };
-
-  const handleDelete = (id: string) => {
-    setData(data.filter((record) => record.id !== id));
+  const handleDelete = (idalumno: string) => {
+    setData(data.filter((record) => record.idalumno !== idalumno));
   };
 
   const handlemultiDelete = (users: MyFormData[]) => {

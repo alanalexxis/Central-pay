@@ -61,7 +61,7 @@ export const createColumns = (): ColumnDef<MyFormData>[] => {
             )}
 
             {onDelete && (
-              <DropdownMenuItem onClick={() => onDelete(record.id)}>
+              <DropdownMenuItem onClick={() => onDelete(record.idalumno)}>
                 Eliminar
               </DropdownMenuItem>
             )}

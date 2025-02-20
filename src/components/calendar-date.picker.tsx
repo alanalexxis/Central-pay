@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { es } from 'date-fns/locale';
@@ -18,7 +18,7 @@ import {
   FormMessage
 } from './ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const FormSchema = z.object({
   datetime: z.date({
@@ -27,9 +27,11 @@ const FormSchema = z.object({
 });
 
 export function DateTimePickerV2({
-  onChange
+  onChange,
+  initialDate
 }: {
   onChange: (date: string) => void;
+  initialDate?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
@@ -37,9 +39,16 @@ export function DateTimePickerV2({
     resolver: zodResolver(FormSchema)
   });
 
-  const handleDateChange = (selectedDate: Date | undefined) => {
+  useEffect(() => {
+    if (initialDate) {
+      const parsedDate = parse(initialDate, 'yyyy-MM-dd', new Date());
+      setDate(parsedDate);
+    }
+  }, [initialDate]);
+
+  const handleDateChange = (selectedDate: Date | null) => {
+    setDate(selectedDate);
     if (selectedDate) {
-      setDate(selectedDate);
       const formattedDate = format(selectedDate, 'yyyy-MM-dd');
       onChange(formattedDate);
     }
@@ -84,6 +93,7 @@ export function DateTimePickerV2({
                   />
                 </PopoverContent>
               </Popover>
+
               <FormMessage />
             </FormItem>
           )}

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,14 +25,13 @@ const formSchema = z.object({
   telefono: z.string().nonempty('El campo teléfono no puede estar vacío'),
   fecha_nacimiento: z.string().nonempty('Selecciona una fecha de nacimiento')
 });
-// Add an interface for user form props
+
 interface MyFormProps {
   onSubmit: (data: MyFormData) => void;
   initialData?: MyFormData | null;
 }
 
 export default function MyForm({ onSubmit, initialData }: MyFormProps) {
-  // Set default values for the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
@@ -44,27 +43,27 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // Enviar datos a la API usando fetch
-      const res = await fetch('/api/alumnos', {
-        method: 'POST',
+      // Asegurar que el ID sea tomado correctamente
+      const id = values.idalumno || initialData?.idalumno;
+      const method = id ? 'PUT' : 'POST';
+
+      const res = await fetch(`/api/alumnos${id ? `/${id}` : ''}`, {
+        method,
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(values) // Los datos del formulario se envían como JSON
+        body: JSON.stringify(values)
       });
 
-      // Verificar si la respuesta es exitosa
       if (res.ok) {
-        toast.success('¡Éxito! Información guardada con éxito.');
-        const data = await res.json(); // Obtener los datos de la respuesta
-        onSubmit(data); // Pasar los datos a onSubmit en el componente padre
-        form.reset(); // Limpiar el formulario
+        const data = await res.json();
+        onSubmit(data);
+        form.reset(data); // Asegurar que el formulario se actualice con los nuevos valores
       } else {
-        toast.error('Error al guardar la información.');
+        console.error('Error al enviar los datos:', await res.text());
       }
     } catch (error) {
       console.error('Error al enviar los datos:', error);
-      toast.error('Error al guardar la información.');
     }
   }
 
@@ -123,7 +122,10 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Fecha de nacimiento</FormLabel>
-              <DateTimePickerV2 onChange={(date) => field.onChange(date)} />
+              <DateTimePickerV2
+                onChange={(date) => field.onChange(date)}
+                initialDate={field.value}
+              />
               <FormDescription>
                 Selecciona la fecha de nacimiento del alumno.
               </FormDescription>
