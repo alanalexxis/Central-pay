@@ -37,7 +37,9 @@ export default function TablePage() {
   const [editingUser, setEditingUser] = useState<MyFormData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [isMultiDeleteDialogOpen, setIsMultiDeleteDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<MyFormData[]>([]);
   const columns = createColumns();
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function TablePage() {
       });
 
       if (res.ok) {
+        toast.success('Alumno eliminado con éxito.');
         setData(data.filter((record) => record.idalumno !== deleteId));
       } else {
         console.error('Error al eliminar el alumno:', await res.text());
@@ -90,9 +93,38 @@ export default function TablePage() {
     }
   };
 
-  const handlemultiDelete = (users: MyFormData[]) => {
-    const userIds = new Set(users.map((record) => record.id));
-    setData(data.filter((record) => !userIds.has(record.id)));
+  const confirmMultiDelete = (users: MyFormData[]) => {
+    setSelectedUsers(users);
+    setIsMultiDeleteDialogOpen(true);
+  };
+
+  const handlemultiDelete = async () => {
+    const userIds = selectedUsers.map((record) => record.idalumno);
+
+    try {
+      const deletePromises = userIds.map((id) =>
+        fetch(`/api/alumnos/${id}`, {
+          method: 'DELETE'
+        })
+      );
+
+      const results = await Promise.all(deletePromises);
+
+      const successfulDeletes = results.filter((res) => res.ok).length;
+
+      if (successfulDeletes === userIds.length) {
+        setData(data.filter((record) => !userIds.includes(record.idalumno)));
+        toast.success('Alumnos eliminados exitosamente.');
+      } else {
+        toast.error('Error al eliminar algunos alumnos.');
+      }
+    } catch (error) {
+      console.error('Error al eliminar los alumnos:', error);
+      toast.error('Error al eliminar los alumnos.');
+    } finally {
+      setIsMultiDeleteDialogOpen(false);
+      setSelectedUsers([]);
+    }
   };
 
   const handleEdit = (record: MyFormData) => {
@@ -153,7 +185,39 @@ export default function TablePage() {
                 {
                   handleDelete();
                 }
-                toast.success('El alumno ha sido eliminado.');
+              }}
+            >
+              Eliminar
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog
+        open={isMultiDeleteDialogOpen}
+        onOpenChange={setIsMultiDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar eliminación múltiple</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de que deseas eliminar estos alumnos? Esta acción no
+              se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => setIsMultiDeleteDialogOpen(false)}
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <Button
+              variant='destructive'
+              onClick={() => {
+                // yes, you have to set a timeout
+                setTimeout(() => (document.body.style.pointerEvents = ''), 100);
+                {
+                  handlemultiDelete();
+                }
               }}
             >
               Eliminar
@@ -168,7 +232,7 @@ export default function TablePage() {
         onAdd={openCreateDialog}
         onEdit={handleEdit}
         onDelete={confirmDelete}
-        onmultiDelete={handlemultiDelete}
+        onmultiDelete={confirmMultiDelete}
       />
     </div>
   );
