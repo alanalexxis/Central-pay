@@ -20,7 +20,7 @@ interface ColumnActions {
 export const createColumns = (): ColumnDef<MyFormData>[] => {
   const columns: ColumnDef<MyFormData>[] = [
     {
-      accessorKey: 'id',
+      accessorKey: 'idalumno',
       header: 'ID'
     },
     {

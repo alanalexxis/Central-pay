@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { createColumns } from '@/components/column';
 import { DataTable } from '@/components/data-table';
 import { MyFormData } from '@/../types/table';
@@ -13,20 +13,25 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 
-const initialData: MyFormData[] = [
-  {
-    id: '1',
-    nombre: 'Jane Doe',
-    telefono: '9191686541',
-    fecha_nacimiento: '1990-01-01'
-  }
-];
+async function loadAlumnos() {
+  const res = await fetch('/api/alumnos');
+  const data = await res.json();
+  return data;
+}
 
 export default function TablePage() {
-  const [data, setData] = useState<MyFormData[]>(initialData);
+  const [data, setData] = useState<MyFormData[]>([]);
   const [editingUser, setEditingUser] = useState<MyFormData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const columns = createColumns();
+
+  useEffect(() => {
+    async function fetchData() {
+      const alumnos = await loadAlumnos();
+      setData(alumnos);
+    }
+    fetchData();
+  }, []);
 
   const handleCreate = (newRecord: Omit<MyFormData, 'id'>) => {
     const record = { ...newRecord, id: String(data.length + 1) };

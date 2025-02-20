@@ -8,10 +8,10 @@ datasource db {
 }
 
 model alumno {
-    idalumno         Int      @id @default(autoincrement())
-    nombre           String   @db.VarChar(200)
-    telefono         String   @db.VarChar(45)
-    fecha_nacimiento DateTime @db.Date
+    idalumno         Int    @id @default(autoincrement())
+    nombre           String @db.VarChar(200)
+    telefono         String @db.VarChar(45)
+    fecha_nacimiento String @db.VarChar(45)
     pago             pago[]
 }
 

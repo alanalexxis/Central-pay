@@ -43,14 +43,28 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
     }
   });
 
-  //Add onSubmit on HandleSubmit function
-  function handleSubmit(values: z.infer<typeof formSchema>) {
+  async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      onSubmit(values as MyFormData);
-      form.reset();
-      toast.success('¡Éxito! Información guardada con éxito.');
+      // Enviar datos a la API usando fetch
+      const res = await fetch('/api/alumnos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values) // Los datos del formulario se envían como JSON
+      });
+
+      // Verificar si la respuesta es exitosa
+      if (res.ok) {
+        toast.success('¡Éxito! Información guardada con éxito.');
+        const data = await res.json(); // Obtener los datos de la respuesta
+        onSubmit(data); // Pasar los datos a onSubmit en el componente padre
+        form.reset(); // Limpiar el formulario
+      } else {
+        toast.error('Error al guardar la información.');
+      }
     } catch (error) {
-      console.error('Form submission error', error);
+      console.error('Error al enviar los datos:', error);
       toast.error('Error al guardar la información.');
     }
   }
