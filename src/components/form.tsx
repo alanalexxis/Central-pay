@@ -17,14 +17,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MyFormData } from '@/../types/table';
+import { DateTimePickerV2 } from './calendar-date.picker';
 
 const formSchema = z.object({
   id: z.string().optional(),
   nombre: z.string().nonempty('El campo nombre no puede estar vacío'),
   telefono: z.string().nonempty('El campo teléfono no puede estar vacío'),
-  fecha_nacimiento: z
-    .string()
-    .nonempty('Selecciona la fecha de nacimiento del alumno')
+  fecha_nacimiento: z.string().nonempty('Selecciona una fecha de nacimiento')
 });
 // Add an interface for user form props
 interface MyFormProps {
@@ -118,27 +117,20 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
             />
           </div>
         </div>
-
-        <div className='grid grid-cols-12 gap-4'>
-          <div className='col-span-6'>
-            <FormField
-              control={form.control}
-              name='fecha_nacimiento'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Fecha de nacimiento</FormLabel>
-                  <FormControl>
-                    <Input placeholder='shadcn' type='date' {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Introduce la fecha de nacimiento del alumno.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+        <FormField
+          control={form.control}
+          name='fecha_nacimiento'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Fecha de nacimiento</FormLabel>
+              <DateTimePickerV2 onChange={(date) => field.onChange(date)} />
+              <FormDescription>
+                Selecciona la fecha de nacimiento del alumno.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type='submit'>{initialData ? 'Actualizar' : 'Guardar'}</Button>
       </form>
     </Form>
