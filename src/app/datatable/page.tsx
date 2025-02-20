@@ -12,6 +12,19 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 async function loadAlumnos() {
   const res = await fetch('/api/alumnos');
@@ -23,6 +36,8 @@ export default function TablePage() {
   const [data, setData] = useState<MyFormData[]>([]);
   const [editingUser, setEditingUser] = useState<MyFormData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const columns = createColumns();
 
   useEffect(() => {
@@ -48,8 +63,31 @@ export default function TablePage() {
     setIsDialogOpen(false);
     setEditingUser(null);
   };
-  const handleDelete = (idalumno: string) => {
-    setData(data.filter((record) => record.idalumno !== idalumno));
+
+  const confirmDelete = (idalumno: string) => {
+    setDeleteId(idalumno);
+    setIsAlertDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      const res = await fetch(`/api/alumnos/${deleteId}`, {
+        method: 'DELETE'
+      });
+
+      if (res.ok) {
+        setData(data.filter((record) => record.idalumno !== deleteId));
+      } else {
+        console.error('Error al eliminar el alumno:', await res.text());
+      }
+    } catch (error) {
+      console.error('Error al eliminar el alumno:', error);
+    } finally {
+      setIsAlertDialogOpen(false);
+      setDeleteId(null);
+    }
   };
 
   const handlemultiDelete = (users: MyFormData[]) => {
@@ -66,6 +104,7 @@ export default function TablePage() {
     setEditingUser(null);
     setIsDialogOpen(true);
   };
+
   return (
     <div className='container mx-auto py-10'>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -92,12 +131,43 @@ export default function TablePage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar eliminación</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de que deseas eliminar este alumno? Esta acción no
+              se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsAlertDialogOpen(false)}>
+              Cancelar
+            </AlertDialogCancel>
+            <Button
+              variant='destructive'
+              onClick={() => {
+                // yes, you have to set a timeout
+                setTimeout(() => (document.body.style.pointerEvents = ''), 100);
+                {
+                  handleDelete();
+                }
+                toast.success('El alumno ha sido eliminado.');
+              }}
+            >
+              Eliminar
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <DataTable
         columns={columns}
         data={data}
         onAdd={openCreateDialog}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={confirmDelete}
         onmultiDelete={handlemultiDelete}
       />
     </div>

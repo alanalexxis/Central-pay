@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -56,11 +56,13 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
       });
 
       if (res.ok) {
+        toast.success('¡Éxito! Información guardada con éxito.');
         const data = await res.json();
         onSubmit(data);
         form.reset(data); // Asegurar que el formulario se actualice con los nuevos valores
       } else {
         console.error('Error al enviar los datos:', await res.text());
+        toast.error('Error al guardar la información.');
       }
     } catch (error) {
       console.error('Error al enviar los datos:', error);
