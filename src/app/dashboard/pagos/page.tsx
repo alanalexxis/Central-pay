@@ -10,7 +10,7 @@ import { Suspense } from 'react';
 import TablaAlumnos from '@/components/tablaAlumnos';
 
 export const metadata = {
-  title: 'Dashboard: Alumnos'
+  title: 'Dashboard: Pagos'
 };
 
 type pageProps = {
@@ -30,8 +30,8 @@ export default async function Page(props: pageProps) {
       <div className='flex flex-1 flex-col space-y-4'>
         <div className='flex items-start justify-between'>
           <Heading
-            title='Alumnos'
-            description='Administra a tus alumnos con facilidad: edita, elimina y busca en tiempo real.'
+            title='Pagos'
+            description='Administra los pagos de alumnos de manera fácil y eficiente, con registro, búsqueda y control en tiempo real..'
           />
         </div>
         <Separator />
