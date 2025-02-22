@@ -76,6 +76,7 @@ export function DataTable<TData, TValue>({
       .getFilteredSelectedRowModel()
       .rows.map((row) => row.original as TData);
     onmultiDelete(selectedItems);
+    setRowSelection({}); // Limpiar la selección de filas
   };
 
   return (
@@ -95,7 +96,6 @@ export function DataTable<TData, TValue>({
               Eliminar seleccionados ({Object.keys(rowSelection).length})
             </Button>
           )}
-
           <Button onClick={onAdd}>Añadir alumno</Button>
         </div>
       </div>

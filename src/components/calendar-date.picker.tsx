@@ -41,7 +41,7 @@ export function DateTimePickerV2({
 
   useEffect(() => {
     if (initialDate) {
-      const parsedDate = parse(initialDate, 'yyyy-MM-dd', new Date());
+      const parsedDate = parse(initialDate, 'dd/MM/yyyy', new Date());
       setDate(parsedDate);
     }
   }, [initialDate]);
@@ -49,7 +49,7 @@ export function DateTimePickerV2({
   const handleDateChange = (selectedDate: Date | null) => {
     setDate(selectedDate);
     if (selectedDate) {
-      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+      const formattedDate = format(selectedDate, 'dd/MM/yyyy');
       onChange(formattedDate);
     }
   };
