@@ -7,7 +7,7 @@ import { searchParamsCache, serialize } from '@/lib/searchparams';
 
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import TablaAlumnos from '@/components/tablaAlumnos';
+import TablaAlumnos from '@/components/tabla-alumnos/tablaAlumnos';
 
 export const metadata = {
   title: 'Dashboard: Alumnos'

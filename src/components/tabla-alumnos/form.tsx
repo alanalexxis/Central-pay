@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { MyFormData } from '@/../types/table';
-import { DateTimePickerV2 } from './calendar-date.picker';
+import { DateTimePickerV2 } from '../calendar-date.picker';
 
 const formSchema = z.object({
   id: z.string().optional(),

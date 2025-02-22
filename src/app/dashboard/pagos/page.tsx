@@ -7,7 +7,7 @@ import { searchParamsCache, serialize } from '@/lib/searchparams';
 
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import TablaAlumnos from '@/components/tablaAlumnos';
+import TablaPagos from '@/components/tabla-pagos/tablaPagos';
 
 export const metadata = {
   title: 'Dashboard: Pagos'
@@ -39,7 +39,7 @@ export default async function Page(props: pageProps) {
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
         >
-          <TablaAlumnos />
+          <TablaPagos />
         </Suspense>
       </div>
     </PageContainer>

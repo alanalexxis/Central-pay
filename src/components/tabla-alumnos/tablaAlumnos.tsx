@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { createColumns } from '@/components/column';
-import { DataTable } from '@/components/data-table';
+import { createColumns } from '@/components/tabla-alumnos/column';
+import { DataTable } from '@/components/tabla-alumnos/data-table';
 import { MyFormData } from '@/../types/table';
-import UserForm from '@/components/form';
+import UserForm from '@/components/tabla-alumnos/form';
 import {
   Dialog,
   DialogContent,

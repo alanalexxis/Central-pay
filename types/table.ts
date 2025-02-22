@@ -4,3 +4,9 @@ export interface MyFormData {
   telefono: string;
   fecha_nacimiento: String;
 }
+export interface MyFormDataPago {
+  idpago: string;
+  idalumno: number;
+  nota_venta: string;
+  fecha_pago: String;
+}
