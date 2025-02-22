@@ -56,16 +56,6 @@ export default function TablePage() {
     setIsDialogOpen(false);
   };
 
-  const handleUpdate = (updatedUser: MyFormDataPago) => {
-    setData(
-      data.map((record) =>
-        record.idpago === updatedUser.idpago ? updatedUser : record
-      )
-    );
-    setIsDialogOpen(false);
-    setEditingUser(null);
-  };
-
   const confirmDelete = (idpago: string) => {
     setDeleteId(idpago);
     setIsAlertDialogOpen(true);

@@ -24,8 +24,8 @@ export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
       header: 'ID'
     },
     {
-      accessorKey: 'idalumno',
-      header: 'Id alumno'
+      accessorKey: 'alumno.nombre',
+      header: 'Nombre'
     },
     {
       accessorKey: 'fecha_pago',
