@@ -32,7 +32,18 @@ interface MyFormProps {
   initialData?: MyFormDataPago | null;
   lastNotaVenta?: string | null;
 }
+function incrementarNotaVenta(notaVenta: string | null): string {
+  if (!notaVenta) return '';
 
+  const match = notaVenta.match(/(\d{4}A-Y)(\d{3})/);
+  if (!match) return notaVenta;
+
+  const prefix = match[1];
+  const number = parseInt(match[2], 10) + 1;
+  const incrementedNumber = number.toString().padStart(3, '0');
+
+  return `${prefix}${incrementedNumber}`;
+}
 export default function MyForm({
   onSubmit,
   initialData,
@@ -46,6 +57,7 @@ export default function MyForm({
     }
   });
 
+  const incrementedNotaVenta = incrementarNotaVenta(lastNotaVenta);
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
       const id = values.idpago || initialData?.idpago;
@@ -99,7 +111,7 @@ export default function MyForm({
                 <FormItem>
                   <FormLabel>Nota de venta</FormLabel>
                   <FormControl>
-                    <Input value={lastNotaVenta ?? ''} readOnly />
+                    <Input value={incrementedNotaVenta} readOnly />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
