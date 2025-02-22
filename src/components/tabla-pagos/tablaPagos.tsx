@@ -41,11 +41,17 @@ export default function TablePage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<MyFormDataPago[]>([]);
   const columns = createColumns();
+  const [lastNotaVenta, setLastNotaVenta] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       const pagos = await loadPagos();
       setData(pagos);
+      if (pagos.length > 0) {
+        const lastNota = pagos[pagos.length - 1].nota_venta;
+        setLastNotaVenta(lastNota);
+        console.log('Última nota_pago:', lastNota);
+      }
     }
     fetchData();
   }, []);
@@ -147,6 +153,7 @@ export default function TablePage() {
             <UserForm
               onSubmit={editingUser ? handleUpdate : handleCreate}
               initialData={editingUser}
+              lastNotaVenta={lastNotaVenta}
             />
           </div>
         </DialogContent>

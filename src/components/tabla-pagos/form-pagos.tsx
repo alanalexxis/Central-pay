@@ -30,9 +30,14 @@ const formSchema = z.object({
 interface MyFormProps {
   onSubmit: (data: MyFormDataPago) => void;
   initialData?: MyFormDataPago | null;
+  lastNotaVenta?: string | null;
 }
 
-export default function MyForm({ onSubmit, initialData }: MyFormProps) {
+export default function MyForm({
+  onSubmit,
+  initialData,
+  lastNotaVenta
+}: MyFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
@@ -94,12 +99,7 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
                 <FormItem>
                   <FormLabel>Nota de venta</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder='Ejemplo: 2025A-Y001'
-                      type='text'
-                      {...field}
-                      readOnly
-                    />
+                    <Input value={lastNotaVenta ?? ''} readOnly />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

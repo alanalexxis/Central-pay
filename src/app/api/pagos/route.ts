@@ -27,6 +27,9 @@ export async function POST(request: Request) {
   try {
     const { idalumno } = await request.json();
 
+    // Obtener el año actual dinámicamente
+    const year = new Date().getFullYear();
+
     // Obtener la última nota de venta
     const ultimoPago = await prisma.pago.findFirst({
       orderBy: {
@@ -39,7 +42,7 @@ export async function POST(request: Request) {
       ? parseInt(ultimoPago.nota_venta.split('-Y')[1])
       : 0;
     const nuevoNumero = (ultimoNumero + 1).toString().padStart(3, '0');
-    const nuevaNotaVenta = `2025A-Y${nuevoNumero}`;
+    const nuevaNotaVenta = `${year}A-Y${nuevoNumero}`;
 
     // Crear el pago y obtener los datos del alumno relacionado
     const nuevoPago = await prisma.pago.create({
@@ -48,7 +51,7 @@ export async function POST(request: Request) {
         nota_venta: nuevaNotaVenta
       },
       include: {
-        alumno: true // Incluye los datos del alumno (suponiendo que hay una relación entre 'pago' y 'alumno')
+        alumno: true // Incluye los datos del alumno
       }
     });
 
@@ -56,7 +59,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ...nuevoPago,
       alumno: {
-        nombre: nuevoPago.alumno.nombre // Asumiendo que 'nombre' es el campo del alumno
+        nombre: nuevoPago.alumno.nombre
       }
     });
   } catch (error) {
