@@ -102,7 +102,7 @@ export default function MyForm({
           {incrementedNotaVenta}
         </Badge>
       </div>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-12'>
         <div className='space-y-4'>
           <FormField
             control={form.control}
@@ -124,7 +124,7 @@ export default function MyForm({
                         <div className='flex items-center gap-2'>
                           <div className='flex flex-col'>
                             <div className='font-medium'>{alumno.nombre}</div>
-                            <div className='text-xxs text-muted-foreground'>
+                            <div className='text-xs text-muted-foreground'>
                               {alumno.telefono}
                             </div>
                           </div>
@@ -147,7 +147,7 @@ export default function MyForm({
                       placeholder='Seleccionar alumno...'
                       value={selectedUser}
                       onChange={setSelectedUser}
-                      width='375px'
+                      width='475px'
                     />
                   </div>
                 </FormControl>

@@ -17,6 +17,23 @@ interface ColumnActions {
   onDelete?: (id: string) => void;
 }
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const utcDate = new Date(
+    date.toLocaleString('en-US', { timeZone: 'America/Mexico_City' })
+  );
+  const day = String(utcDate.getDate()).padStart(2, '0');
+  const month = String(utcDate.getMonth() + 1).padStart(2, '0');
+  const year = utcDate.getFullYear();
+  let hours = utcDate.getHours();
+  const minutes = String(utcDate.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  const strHours = String(hours).padStart(2, '0');
+
+  return `${day}/${month}/${year} ${strHours}:${minutes} ${ampm}`;
+};
 export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
   const columns: ColumnDef<MyFormDataPago>[] = [
     {
@@ -25,11 +42,12 @@ export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
     },
     {
       accessorKey: 'alumno.nombre',
-      header: 'Nombre'
+      header: 'Nombre de alumno'
     },
     {
       accessorKey: 'fecha_pago',
-      header: 'Fecha de pago'
+      header: 'Fecha de pago',
+      cell: ({ getValue }) => formatDate(getValue() as string)
     },
     {
       accessorKey: 'nota_venta',

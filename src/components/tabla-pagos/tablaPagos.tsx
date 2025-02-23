@@ -78,7 +78,16 @@ export default function TablePage() {
 
       if (res.ok) {
         toast.success('Pago eliminado con éxito.');
-        setData(data.filter((record) => record.idpago !== deleteId));
+        const updatedData = data.filter((record) => record.idpago !== deleteId);
+        setData(updatedData);
+
+        // Actualiza lastNotaVenta
+        if (updatedData.length > 0) {
+          const lastNota = updatedData[updatedData.length - 1].nota_venta;
+          setLastNotaVenta(lastNota);
+        } else {
+          setLastNotaVenta(null);
+        }
       } else {
         console.error('Error al eliminar el pago:', await res.text());
       }
