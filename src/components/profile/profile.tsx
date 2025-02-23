@@ -1,35 +1,58 @@
 'use client';
 
 import React from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSession } from 'next-auth/react';
 import { useDropzone } from 'react-dropzone';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera } from 'lucide-react';
 import { toast } from 'sonner';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
 
 export default function Component() {
   const { data: session } = useSession();
   const [profileImage, setProfileImage] = React.useState(
     session?.user?.image ?? ''
   );
+  // Mostrar el objeto de la sesión en la consola
+  console.log(session);
 
-  const onDrop = React.useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setProfileImage(result);
-        // Here you would typically upload the image to your server
-        // and update the user's profile image URL
-        toast.success('Profile image updated successfully');
-      };
-      reader.readAsDataURL(file);
-    }
-  }, []);
+  const onDrop = React.useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const result = e.target?.result as string;
+          setProfileImage(result);
+
+          // Obtener el tipo MIME del archivo (por ejemplo, 'image/png' o 'image/jpeg')
+          const fileType = file.type;
+
+          // Llamar a la API para actualizar la imagen del usuario
+          const response = await fetch(`/api/usuarios/${session?.user.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              imagen: result, // Enviar la imagen como base64
+              tipoImagen: fileType // Enviar el tipo MIME del archivo
+            })
+          });
+
+          if (response.ok) {
+            toast.success('Imagen de perfil actualizada con éxito');
+          } else {
+            toast.error('Error al actualizar la imagen de perfil');
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    [session]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -50,9 +73,9 @@ export default function Component() {
               <Avatar className='h-24 w-24 cursor-pointer' {...getRootProps()}>
                 <AvatarImage
                   src={profileImage}
-                  alt={session.user?.name ?? ''}
+                  alt={session?.user?.name ?? ''}
                 />
-                <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+                <AvatarFallback>{session?.user?.name?.[0]}</AvatarFallback>
                 <input {...getInputProps()} />
                 <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 transition-opacity hover:opacity-100'>
                   <Camera className='h-8 w-8 text-white' />
@@ -60,7 +83,9 @@ export default function Component() {
               </Avatar>
             </div>
             <div className='space-y-1.5'>
-              <h1 className='text-2xl font-bold'>{session.user?.name ?? ''}</h1>
+              <h1 className='text-2xl font-bold'>
+                {session?.user?.name ?? ''}
+              </h1>
               <p className='text-gray-500 dark:text-gray-400'>Administrador</p>
             </div>
           </div>
