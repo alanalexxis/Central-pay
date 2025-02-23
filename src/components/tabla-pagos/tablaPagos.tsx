@@ -59,6 +59,7 @@ export default function TablePage() {
   const handleCreate = (newRecord: Omit<MyFormDataPago, 'id'>) => {
     const record = { ...newRecord, id: String(data.length + 1) };
     setData([...data, record]);
+    setLastNotaVenta(record.nota_venta); // Actualiza el estado de lastNotaVenta
     setIsDialogOpen(false);
   };
 

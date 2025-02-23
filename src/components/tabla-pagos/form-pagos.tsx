@@ -4,22 +4,21 @@ import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { cn } from '@/lib/utils';
-import { Alumno, searchAllUsers } from '@/components/tabla-pagos/action';
+import { type Alumno, searchAllUsers } from '@/components/tabla-pagos/action';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { MyFormDataPago } from '@/../types/table';
+import type { MyFormDataPago } from '@/../types/table';
 import { AsyncSelect } from '../search';
 import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -32,6 +31,7 @@ interface MyFormProps {
   initialData?: MyFormDataPago | null;
   lastNotaVenta?: string | null;
 }
+
 function incrementarNotaVenta(notaVenta: string | null): string {
   if (!notaVenta) return '';
 
@@ -39,11 +39,12 @@ function incrementarNotaVenta(notaVenta: string | null): string {
   if (!match) return notaVenta;
 
   const prefix = match[1];
-  const number = parseInt(match[2], 10) + 1;
+  const number = Number.parseInt(match[2], 10) + 1;
   const incrementedNumber = number.toString().padStart(3, '0');
 
   return `${prefix}${incrementedNumber}`;
 }
+
 export default function MyForm({
   onSubmit,
   initialData,
@@ -58,6 +59,14 @@ export default function MyForm({
   });
 
   const incrementedNotaVenta = incrementarNotaVenta(lastNotaVenta);
+  const [selectedUser, setSelectedUser] = useState<string>('');
+
+  useEffect(() => {
+    if (selectedUser) {
+      form.setValue('idalumno', Number(selectedUser));
+    }
+  }, [selectedUser, form]);
+
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
       const id = values.idpago || initialData?.idpago;
@@ -85,92 +94,72 @@ export default function MyForm({
     }
   }
 
-  // Dentro del componente MyForm
-  const [selectedUser, setSelectedUser] = useState<string>('');
-
-  // Actualiza el campo idalumno del formulario cuando se seleccione un alumno
-  useEffect(() => {
-    if (selectedUser) {
-      // Se actualiza el valor de idalumno en el formulario con el id seleccionado
-      form.setValue('idalumno', Number(selectedUser));
-    }
-  }, [selectedUser, form]);
-
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className='mx-auto max-w-3xl space-y-8 py-10'
-      >
-        <div className='grid gap-4'>
-          <div className='col-span-2'>
-            <FormField
-              control={form.control}
-              name='nota_venta'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nota de venta</FormLabel>
-                  <FormControl>
-                    <Input value={incrementedNotaVenta} readOnly />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className='col-span-6'>
-            <FormField
-              control={form.control}
-              name='idalumno'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Alumno</FormLabel>
-                  <FormControl>
-                    <div className='w-full'>
-                      <AsyncSelect<Alumno>
-                        fetcher={searchAllUsers}
-                        preload
-                        filterFn={(alumno, query) =>
-                          alumno.nombre
-                            .toLowerCase()
-                            .includes(query.toLowerCase())
-                        }
-                        renderOption={(alumno) => (
-                          <div className='flex items-center gap-2'>
-                            <div className='flex flex-col'>
-                              <div className='font-medium'>{alumno.nombre}</div>
+      <div className='mb-4 flex items-center justify-between'>
+        <FormLabel></FormLabel>
+        <Badge variant='secondary' className='px-3 py-1 text-lg'>
+          {incrementedNotaVenta}
+        </Badge>
+      </div>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
+        <div className='space-y-4'>
+          <FormField
+            control={form.control}
+            name='idalumno'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Alumno</FormLabel>
+                <FormControl>
+                  <div className='w-full'>
+                    <AsyncSelect<Alumno>
+                      fetcher={searchAllUsers}
+                      preload
+                      filterFn={(alumno, query) =>
+                        alumno.nombre
+                          .toLowerCase()
+                          .includes(query.toLowerCase())
+                      }
+                      renderOption={(alumno) => (
+                        <div className='flex items-center gap-2'>
+                          <div className='flex flex-col'>
+                            <div className='font-medium'>{alumno.nombre}</div>
+                            <div className='text-xxs text-muted-foreground'>
+                              {alumno.telefono}
                             </div>
                           </div>
-                        )}
-                        getOptionValue={(alumno) => alumno.idalumno.toString()}
-                        getDisplayValue={(alumno) => (
-                          <div className='flex items-center gap-2 text-left'>
-                            <div className='flex flex-col leading-tight'>
-                              <div className='font-medium'>{alumno.nombre}</div>
-                            </div>
+                        </div>
+                      )}
+                      getOptionValue={(alumno) => alumno.idalumno.toString()}
+                      getDisplayValue={(alumno) => (
+                        <div className='flex items-center gap-2 text-left'>
+                          <div className='flex flex-col leading-tight'>
+                            <div className='font-medium'>{alumno.nombre}</div>
                           </div>
-                        )}
-                        notFound={
-                          <div className='py-6 text-center text-sm'>
-                            No se encontraron alumnos
-                          </div>
-                        }
-                        label='User'
-                        placeholder='Seleccionar alumno...'
-                        value={selectedUser}
-                        onChange={setSelectedUser}
-                        width='375px'
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                        </div>
+                      )}
+                      notFound={
+                        <div className='py-6 text-center text-sm'>
+                          No se encontraron alumnos
+                        </div>
+                      }
+                      label='User'
+                      placeholder='Seleccionar alumno...'
+                      value={selectedUser}
+                      onChange={setSelectedUser}
+                      width='375px'
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
-        <Button type='submit'>{initialData ? 'Actualizar' : 'Guardar'}</Button>
+        <Button type='submit' className='w-full'>
+          {initialData ? 'Actualizar' : 'Guardar'}
+        </Button>
       </form>
     </Form>
   );
