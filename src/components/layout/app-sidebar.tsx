@@ -48,9 +48,8 @@ import { Icons } from '../icons';
 import { useProfileImageStore } from '@/store/image-store';
 
 export const company = {
-  name: 'Acme Inc',
-  logo: GalleryVerticalEnd,
-  plan: 'Enterprise'
+  name: 'CentralPay.',
+  logo: GalleryVerticalEnd
 };
 
 export default function AppSidebar() {
@@ -193,16 +192,10 @@ export default function AppSidebar() {
 
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell />
-                    Notifications
+                    <div className='flex items-center space-x-2'>
+                      <div className='h-2 w-2 rounded-full bg-green-500' />
+                      <span>Activo</span>
+                    </div>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
