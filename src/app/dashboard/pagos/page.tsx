@@ -1,5 +1,4 @@
 import PageContainer from '@/components/layout/page-container';
-
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';

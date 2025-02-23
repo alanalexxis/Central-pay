@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { MyFormDataPago } from '@/../types/table';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import PDF from '../PDF';
 
 interface ColumnActions {
   onEdit?: (data: MyFormDataPago) => void;
@@ -71,7 +73,21 @@ export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem>Generar factura de pago</DropdownMenuItem>
+            <DropdownMenuItem>
+              {' '}
+              <PDFDownloadLink
+                document={<PDF data={record} />}
+                fileName={`factura_${record.alumno.nombre}.pdf`}
+              >
+                {({ loading }) =>
+                  loading ? (
+                    <span>Generando factura...</span>
+                  ) : (
+                    <span>Generar factura de pago</span>
+                  )
+                }
+              </PDFDownloadLink>
+            </DropdownMenuItem>
             {onEdit && (
               <DropdownMenuItem onClick={() => onEdit(record)}>
                 Editar

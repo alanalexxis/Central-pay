@@ -6,7 +6,9 @@ export interface MyFormData {
 }
 export interface MyFormDataPago {
   idpago: string;
-  idalumno: number;
+  fecha_pago: string;
   nota_venta: string;
-  fecha_pago: String;
+  alumno: {
+    nombre: string;
+  };
 }
