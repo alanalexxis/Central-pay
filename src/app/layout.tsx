@@ -9,8 +9,8 @@ import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'CentralPay',
+  description: 'Plataforma de gestión de pagos de alumnos'
 };
 
 const lato = Lato({

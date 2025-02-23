@@ -1,6 +1,5 @@
 'use client';
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useDropzone } from 'react-dropzone';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,6 +13,9 @@ import { useProfileImageStore } from '@/store/image-store';
 export default function Component() {
   const { data: session } = useSession();
   const { profileImage, setProfileImage } = useProfileImageStore();
+  const [name, setName] = useState(session?.user?.name ?? '');
+  const [email, setEmail] = useState(session?.user?.email ?? '');
+  const [password, setPassword] = useState('');
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[]) => {
@@ -26,16 +28,19 @@ export default function Component() {
 
           const fileType = file.type;
 
-          const response = await fetch(`/api/usuarios/${session?.user.id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              imagen: result,
-              tipoImagen: fileType
-            })
-          });
+          const response = await fetch(
+            `/api/image-upload/${session?.user.id}`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                imagen: result,
+                tipoImagen: fileType
+              })
+            }
+          );
 
           if (response.ok) {
             toast.success('Imagen de perfil actualizada con éxito');
@@ -46,8 +51,26 @@ export default function Component() {
         reader.readAsDataURL(file);
       }
     },
-    [session, setProfileImage]
+    [session, setProfileImage, name, email, password]
   );
+
+  const handleSave = async () => {
+    const response = await fetch(`/api/usuarios/${session?.user.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nombre: name
+      })
+    });
+
+    if (response.ok) {
+      toast.success('Información actualizada con éxito');
+    } else {
+      toast.error('Error al actualizar la información');
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -94,7 +117,8 @@ export default function Component() {
                 <Input
                   id='name'
                   placeholder='Ingresa tu nombre'
-                  defaultValue={session.user?.name ?? ''}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div>
@@ -103,7 +127,8 @@ export default function Component() {
                   id='email'
                   placeholder='Ingresa tu correo'
                   type='email'
-                  defaultValue={session.user?.email ?? ''}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
@@ -133,6 +158,8 @@ export default function Component() {
                   id='new-password'
                   placeholder='Ingresa tu nueva contraseña'
                   type='password'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div>
@@ -147,7 +174,9 @@ export default function Component() {
           </div>
         </div>
         <div className='mt-8'>
-          <Button size='lg'>Guardar</Button>
+          <Button size='lg' onClick={handleSave}>
+            Guardar
+          </Button>
         </div>
       </div>
     );
