@@ -15,8 +15,6 @@ export default function Component() {
   const [profileImage, setProfileImage] = React.useState(
     session?.user?.image ?? ''
   );
-  // Mostrar el objeto de la sesión en la consola
-  console.log(session);
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[]) => {
