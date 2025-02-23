@@ -9,12 +9,11 @@ import { toast } from 'sonner';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
+import { useProfileImageStore } from '@/store/image-store';
 
 export default function Component() {
   const { data: session } = useSession();
-  const [profileImage, setProfileImage] = React.useState(
-    session?.user?.image ?? ''
-  );
+  const { profileImage, setProfileImage } = useProfileImageStore();
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[]) => {
@@ -25,18 +24,16 @@ export default function Component() {
           const result = e.target?.result as string;
           setProfileImage(result);
 
-          // Obtener el tipo MIME del archivo (por ejemplo, 'image/png' o 'image/jpeg')
           const fileType = file.type;
 
-          // Llamar a la API para actualizar la imagen del usuario
           const response = await fetch(`/api/usuarios/${session?.user.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              imagen: result, // Enviar la imagen como base64
-              tipoImagen: fileType // Enviar el tipo MIME del archivo
+              imagen: result,
+              tipoImagen: fileType
             })
           });
 
@@ -49,7 +46,7 @@ export default function Component() {
         reader.readAsDataURL(file);
       }
     },
-    [session]
+    [session, setProfileImage]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -70,7 +67,7 @@ export default function Component() {
             <div className='relative'>
               <Avatar className='h-24 w-24 cursor-pointer' {...getRootProps()}>
                 <AvatarImage
-                  src={profileImage}
+                  src={(profileImage || session.user?.image) ?? ''}
                   alt={session?.user?.name ?? ''}
                 />
                 <AvatarFallback>{session?.user?.name?.[0]}</AvatarFallback>

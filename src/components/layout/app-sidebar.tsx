@@ -45,6 +45,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
+import { useProfileImageStore } from '@/store/image-store';
 
 export const company = {
   name: 'Acme Inc',
@@ -56,7 +57,7 @@ export default function AppSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const { state, isMobile } = useSidebar();
-
+  const { profileImage, setProfileImage } = useProfileImageStore();
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
@@ -141,8 +142,8 @@ export default function AppSidebar() {
                 >
                   <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage
-                      src={session?.user?.image || ''}
-                      alt={session?.user?.name || ''}
+                      src={(profileImage || session.user?.image) ?? ''}
+                      alt={session?.user?.name ?? ''}
                     />
                     <AvatarFallback className='rounded-lg'>
                       {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
@@ -169,8 +170,8 @@ export default function AppSidebar() {
                   <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                     <Avatar className='h-8 w-8 rounded-lg'>
                       <AvatarImage
-                        src={session?.user?.image || ''}
-                        alt={session?.user?.name || ''}
+                        src={(profileImage || session.user?.image) ?? ''}
+                        alt={session?.user?.name ?? ''}
                       />
                       <AvatarFallback className='rounded-lg'>
                         {session?.user?.name?.slice(0, 2)?.toUpperCase() ||

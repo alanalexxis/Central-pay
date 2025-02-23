@@ -11,9 +11,12 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { useProfileImageStore } from '@/store/image-store';
 import { signOut, useSession } from 'next-auth/react';
 export function UserNav() {
   const { data: session } = useSession();
+  const { profileImage } = useProfileImageStore();
+
   if (session) {
     return (
       <DropdownMenu>
@@ -21,7 +24,7 @@ export function UserNav() {
           <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
             <Avatar className='h-8 w-8'>
               <AvatarImage
-                src={session.user?.image ?? ''}
+                src={(profileImage || session.user?.image) ?? ''}
                 alt={session.user?.name ?? ''}
               />
               <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
