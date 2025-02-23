@@ -40,10 +40,12 @@ export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
   const columns: ColumnDef<MyFormDataPago>[] = [
     {
       accessorKey: 'idpago',
-      header: 'ID'
+      header: 'ID',
+      filterFn: 'includesString'
     },
     {
-      accessorKey: 'alumno.nombre',
+      accessorFn: (row) => row.alumno.nombre,
+      id: 'alumno.nombre',
       header: 'Nombre de alumno'
     },
     {

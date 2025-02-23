@@ -85,10 +85,10 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder='Filtrar por nombre'
           value={
-            (table.getColumn('nota_venta')?.getFilterValue() as string) ?? ''
+            (table.getColumn('alumno.nombre')?.getFilterValue() as string) ?? ''
           }
           onChange={(event) =>
-            table.getColumn('nota_venta')?.setFilterValue(event.target.value)
+            table.getColumn('alumno.nombre')?.setFilterValue(event.target.value)
           }
           className='max-w-sm'
         />
