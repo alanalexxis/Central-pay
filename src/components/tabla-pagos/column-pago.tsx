@@ -70,8 +70,8 @@ export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Accciones</DropdownMenuLabel>
-
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuItem>Generar factura de pago</DropdownMenuItem>
             {onEdit && (
               <DropdownMenuItem onClick={() => onEdit(record)}>
                 Editar

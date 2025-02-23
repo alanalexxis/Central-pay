@@ -52,7 +52,7 @@ export const createColumns = (): ColumnDef<MyFormData>[] => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Accciones</DropdownMenuLabel>
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
 
             {onEdit && (
               <DropdownMenuItem onClick={() => onEdit(record)}>

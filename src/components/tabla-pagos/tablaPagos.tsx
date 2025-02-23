@@ -113,14 +113,22 @@ export default function TablePage() {
           method: 'DELETE'
         })
       );
-
       const results = await Promise.all(deletePromises);
-
       const successfulDeletes = results.filter((res) => res.ok).length;
-
       if (successfulDeletes === userIds.length) {
-        setData(data.filter((record) => !userIds.includes(record.idpago)));
+        const updatedData = data.filter(
+          (record) => !userIds.includes(record.idpago)
+        );
+        setData(updatedData);
         toast.success('Pagos eliminados exitosamente.');
+
+        // Actualiza lastNotaVenta
+        if (updatedData.length > 0) {
+          const lastNota = updatedData[updatedData.length - 1].nota_venta;
+          setLastNotaVenta(lastNota);
+        } else {
+          setLastNotaVenta(null);
+        }
       } else {
         toast.error('Error al eliminar algunos pagos.');
       }
