@@ -26,8 +26,9 @@ model pago {
 }
 
 model usuario {
-    idusuario  Int    @id @default(autoincrement())
-    correo     String @unique @db.VarChar(200)
+    idusuario  Int     @id @default(autoincrement())
+    correo     String  @unique @db.VarChar(200)
     contrasena String
-    nombre     String @db.VarChar(200)
+    nombre     String  @db.VarChar(200)
+    imagen     String? @db.VarChar(255) // Campo para la URL de la imagen
 }

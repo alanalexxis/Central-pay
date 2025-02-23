@@ -25,7 +25,7 @@ export const navItems: NavItem[] = [
     title: 'Alumnos',
     url: '/dashboard/alumnos',
     icon: 'product',
-    shortcut: ['p', 'p'],
+    shortcut: ['a', 'a'],
     isActive: false,
     items: [] // No child items
   },
@@ -46,9 +46,9 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Perfil',
-        url: '/dashboard/profile',
+        url: '/dashboard/perfil',
         icon: 'userPen',
-        shortcut: ['m', 'm']
+        shortcut: ['c', 'c']
       }
     ]
   },
