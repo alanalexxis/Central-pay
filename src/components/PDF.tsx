@@ -154,6 +154,12 @@ const formatDate = (dateString: string) => {
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 };
+const getMonthYear = (dateString: string) => {
+  const date = new Date(dateString);
+  const month = date.toLocaleString('es-ES', { month: 'long' });
+  const year = date.getFullYear();
+  return `${month.toUpperCase()} ${year}`;
+};
 
 const PDF = ({ data }: PDFProps) => (
   <Document>
@@ -225,7 +231,7 @@ const PDF = ({ data }: PDFProps) => (
         </View>
         <View style={styles.tableRow}>
           <Text style={styles.column}>
-            PAGO DE COLEGIATURA DEL MES DE ENERO 2025
+            PAGO DE COLEGIATURA DEL MES DE {getMonthYear(data.fecha_pago)}
           </Text>
           <Text style={styles.column}>$250.00</Text>
           <Text style={styles.column}>$250.00</Text>
