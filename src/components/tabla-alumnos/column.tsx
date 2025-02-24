@@ -34,6 +34,10 @@ export const createColumns = (): ColumnDef<MyFormData>[] => {
     {
       accessorKey: 'fecha_nacimiento',
       header: 'Fecha de nacimiento'
+    },
+    {
+      accessorKey: 'sede',
+      header: 'Sede'
     }
   ];
 

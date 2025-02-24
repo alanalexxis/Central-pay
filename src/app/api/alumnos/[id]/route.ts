@@ -78,7 +78,7 @@ export async function DELETE(request: Request, { params }: Params) {
 
 export async function PUT(request: Request, { params }: Params) {
   try {
-    const { nombre, telefono, fecha_nacimiento } = await request.json();
+    const { nombre, telefono, fecha_nacimiento, sede } = await request.json();
 
     const updatedAlumno = await prisma.alumno.update({
       where: {
@@ -87,7 +87,8 @@ export async function PUT(request: Request, { params }: Params) {
       data: {
         nombre,
         telefono,
-        fecha_nacimiento
+        fecha_nacimiento,
+        sede
       }
     });
 

@@ -21,13 +21,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { nombre, telefono, fecha_nacimiento } = await request.json();
+    const { nombre, telefono, fecha_nacimiento, sede } = await request.json();
 
     const nuevoAlumno = await prisma.alumno.create({
       data: {
         nombre,
         telefono,
-        fecha_nacimiento
+        fecha_nacimiento,
+        sede
       }
     });
 

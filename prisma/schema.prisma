@@ -12,6 +12,7 @@ model alumno {
     nombre           String @db.VarChar(200)
     telefono         String @db.VarChar(45)
     fecha_nacimiento String @db.VarChar(45)
+    sede             String @db.VarChar(45)
     pago             pago[]
 }
 

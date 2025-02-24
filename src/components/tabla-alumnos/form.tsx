@@ -18,12 +18,22 @@ import {
 import { Input } from '@/components/ui/input';
 import { MyFormData } from '@/../types/table';
 import { DateTimePickerV2 } from '../calendar-date.picker';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 const formSchema = z.object({
   id: z.string().optional(),
   nombre: z.string().nonempty('El campo nombre no puede estar vacío'),
   telefono: z.string().nonempty('El campo teléfono no puede estar vacío'),
-  fecha_nacimiento: z.string().nonempty('Selecciona una fecha de nacimiento')
+  fecha_nacimiento: z.string().nonempty('Selecciona una fecha de nacimiento'),
+  sede: z.string({
+    required_error: 'Selecciona una sede.'
+  })
 });
 
 interface MyFormProps {
@@ -37,7 +47,8 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
     defaultValues: initialData || {
       nombre: '',
       telefono: '',
-      fecha_nacimiento: ''
+      fecha_nacimiento: '',
+      sede: ''
     }
   });
 
@@ -131,6 +142,28 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
               <FormDescription>
                 Selecciona la fecha de nacimiento del alumno.
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='sede'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Sede</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Selecciona una sede para el alumno' />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value='Yajalón'>Yajalón</SelectItem>
+                  <SelectItem value='Tila'>Tila</SelectItem>
+                </SelectContent>
+              </Select>
+
               <FormMessage />
             </FormItem>
           )}

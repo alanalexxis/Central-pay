@@ -90,11 +90,6 @@ export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
                 }
               </PDFDownloadLink>
             </DropdownMenuItem>
-            {onEdit && (
-              <DropdownMenuItem onClick={() => onEdit(record)}>
-                Editar
-              </DropdownMenuItem>
-            )}
 
             {onDelete && (
               <DropdownMenuItem onClick={() => onDelete(record.idpago)}>
