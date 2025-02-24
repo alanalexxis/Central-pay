@@ -10,6 +10,24 @@ export async function PUT(request: Request, { params }: Params) {
   try {
     const { nombre, correo } = await request.json();
 
+    // Verificar si el correo ya está en uso por otro usuario
+    const userFound = await prisma.usuario.findUnique({
+      where: {
+        correo: correo
+      }
+    });
+
+    if (userFound && userFound.idusuario !== Number(params.id)) {
+      return NextResponse.json(
+        {
+          message: 'El correo ya existe'
+        },
+        {
+          status: 400
+        }
+      );
+    }
+
     const updatedUsuario = await prisma.usuario.update({
       where: {
         idusuario: Number(params.id)

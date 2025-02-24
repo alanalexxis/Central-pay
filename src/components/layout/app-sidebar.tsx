@@ -45,7 +45,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { useProfileImageStore } from '@/store/image-store';
+import { useProfileStore } from '@/store/image-store';
 
 export const company = {
   name: 'CentralPay.',
@@ -56,7 +56,7 @@ export default function AppSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const { state, isMobile } = useSidebar();
-  const { profileImage, setProfileImage } = useProfileImageStore();
+  const { profileImage, name, email, resetProfile } = useProfileStore();
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
@@ -150,10 +150,10 @@ export default function AppSidebar() {
                   </Avatar>
                   <div className='grid flex-1 text-left text-sm leading-tight'>
                     <span className='truncate font-semibold'>
-                      {session?.user?.name || ''}
+                      {name || session.user?.name}
                     </span>
                     <span className='truncate text-xs'>
-                      {session?.user?.email || ''}
+                      {email || session?.user?.email || ''}
                     </span>
                   </div>
                   <ChevronsUpDown className='ml-auto size-4' />
@@ -177,9 +177,10 @@ export default function AppSidebar() {
                           'CN'}
                       </AvatarFallback>
                     </Avatar>
+
                     <div className='grid flex-1 text-left text-sm leading-tight'>
                       <span className='truncate font-semibold'>
-                        {session?.user?.name || ''}
+                        {name || session.user?.name}
                       </span>
                       <span className='truncate text-xs'>
                         {' '}
@@ -199,7 +200,12 @@ export default function AppSidebar() {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    signOut();
+                    resetProfile();
+                  }}
+                >
                   <LogOut />
                   Cerrar sesión
                 </DropdownMenuItem>
