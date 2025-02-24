@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { AlertDemo } from '@/components/AlertDemo';
 import { useEffect, useState } from 'react';
+import AlertDestructive from '@/components/AlertError';
 
 export function RegisterForm({
   className,
@@ -18,9 +19,10 @@ export function RegisterForm({
     reset
   } = useForm();
   const [success, setSuccess] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const onSubmit = handleSubmit(async (data) => {
     if (data.contrasena !== data.confirmContrasena) {
-      return alert('Las contraseñas no coinciden');
+      return setError('Las contraseñas no coinciden');
     }
     const res = await fetch('/api/auth/register', {
       method: 'POST',
@@ -39,6 +41,7 @@ export function RegisterForm({
       reset();
     } else {
       console.log(resJSON);
+      setError(resJSON.message || 'Algo salió mal.');
     }
   });
   useEffect(() => {
@@ -50,6 +53,15 @@ export function RegisterForm({
       return () => clearTimeout(timer);
     }
   }, [success]);
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000); // Restablece el estado error después de 5 segundos
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   return (
     <form
@@ -59,6 +71,17 @@ export function RegisterForm({
     >
       {success && (
         <AlertDemo description='Registro exitoso. Ya puedes iniciar sesión.' />
+      )}
+      {error && (
+        <AlertDestructive
+          description={
+            error === 'El correo ya existe'
+              ? 'El correo ya está registrado.'
+              : error === 'Las contraseñas no coinciden'
+                ? 'Las contraseñas no coinciden.'
+                : 'Algo salió mal.'
+          }
+        />
       )}
       <div className='flex flex-col items-center gap-2 text-center'>
         <h1 className='text-2xl font-bold'>Registrarse</h1>
