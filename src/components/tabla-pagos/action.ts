@@ -7,6 +7,7 @@ export interface Alumno {
   nombre: string;
   telefono: string;
   fecha_nacimiento: string;
+  sede: string;
 }
 
 export async function searchUsers(query?: string): Promise<Alumno[]> {

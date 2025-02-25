@@ -19,6 +19,7 @@ import { AsyncSelect } from '../search';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { MapPin } from 'lucide-react';
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -140,12 +141,18 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
                           .includes(query.toLowerCase())
                       }
                       renderOption={(alumno) => (
-                        <div className='flex items-center gap-2'>
-                          <div className='flex flex-col'>
-                            <div className='font-medium'>{alumno.nombre}</div>
-                            <div className='text-xs text-muted-foreground'>
-                              {alumno.telefono}
+                        <div className='flex w-full items-center justify-between'>
+                          <div className='flex items-center gap-2'>
+                            <div className='flex flex-col'>
+                              <div className='font-medium'>{alumno.nombre}</div>
+                              <div className='text-xs text-muted-foreground'>
+                                {alumno.telefono}
+                              </div>
                             </div>
+                          </div>
+                          <div className='flex items-center text-xs text-muted-foreground'>
+                            <MapPin className='mr-1 h-3 w-3' />
+                            {alumno.sede}
                           </div>
                         </div>
                       )}
