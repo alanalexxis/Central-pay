@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Document,
   Page,
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
   },
   header: { flexDirection: 'row', marginBottom: 10 },
   logoContainer: { width: '25%' },
-  logo: { width: 60, height: 60 },
+  logo: { width: 80, height: 80 },
   headerText: { width: '75%' },
   title: { fontSize: 14, fontWeight: 'bold', color: '#2c3e50' },
   subtitle: { fontSize: 12, marginBottom: 2, color: '#34495e' },
@@ -120,94 +122,121 @@ const getMonthYear = (dateString: string) => {
   return `${date.toLocaleString('es-ES', { month: 'long' }).toUpperCase()} ${date.getFullYear()}`;
 };
 
-const Receipt = ({ data, style }: PDFProps & { style?: any }) => (
-  <View style={[styles.receiptContainer, style]}>
-    <View style={styles.header}>
-      <View style={styles.logoContainer}>
-        <Image style={styles.logo} src='/placeholder.svg?height=60&width=60' />
-      </View>
-      <View style={styles.headerText}>
-        <Text style={styles.title}>
-          CENTRO DE CAPACITACION Y SOPORTE INFORMATICO
-        </Text>
-        <Text style={styles.subtitle}>
-          INCORPORADO AL SISTEMA EDUCATIVO NACIONAL
-        </Text>
-        <Text style={styles.address}>C.C.T. 07PBT0718Z</Text>
-        <Text style={styles.address}>
-          2DA PONIENTE SUR S/N, BARRIO CENTRO, YAJALÓN
-        </Text>
-        <Text style={styles.address}>CHIAPAS C.P. 29930, TEL. 9196714330</Text>
-      </View>
-    </View>
+const getLocation = (notaVenta: string) => {
+  if (notaVenta.includes('Y')) {
+    return {
+      location: 'YAJALÓN, CHIAPAS',
 
-    <Text style={styles.invoiceTitle}>RECIBO DE COLEGIATURA</Text>
+      cp: '29930',
+      tel: '9196714330'
+    };
+  } else if (notaVenta.includes('T')) {
+    return {
+      location: 'TILA, CHIAPAS',
 
-    <View style={styles.infoContainer}>
-      <View style={styles.infoColumn}>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>CRED:</Text>
+      cp: '29910',
+      tel: '9191293658'
+    };
+  }
+  return { location: '', ciudad: '' };
+};
+
+const Receipt = ({ data, style }: PDFProps & { style?: any }) => {
+  const { location, tel, cp } = getLocation(data.nota_venta);
+
+  return (
+    <View style={[styles.receiptContainer, style]}>
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Image style={styles.logo} src='/logo.png?height=100&width=100' />
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>HORARIO:</Text>
-          <Text style={styles.infoValue}>DOMINGOS DE 07:00 AM A 11:00 AM</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={[styles.infoLabel]}>NOMBRE:</Text>
-          <Text style={[styles.infoValue, { textTransform: 'uppercase' }]}>
-            {data.alumno.nombre}
+        <View style={styles.headerText}>
+          <Text style={styles.title}>
+            CENTRO DE CAPACITACION Y SOPORTE INFORMATICO
+          </Text>
+          <Text style={styles.subtitle}>
+            INCORPORADO AL SISTEMA EDUCATIVO NACIONAL
+          </Text>
+          <Text style={styles.address}>C.C.T. 07PBT0718Z</Text>
+          <Text style={styles.address}>
+            2DA PONIENTE SUR S/N, BARRIO CENTRO, {location}
+          </Text>
+          <Text style={styles.address}>
+            CHIAPAS C.P. {cp}, TEL. {tel}
           </Text>
         </View>
       </View>
-      <View style={styles.infoColumn}>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>NOTA DE VENTA:</Text>
-          <Text style={styles.infoValue}>{data.nota_venta}</Text>
+
+      <Text style={styles.invoiceTitle}>RECIBO DE COLEGIATURA</Text>
+
+      <View style={styles.infoContainer}>
+        <View style={styles.infoColumn}>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>CRED:</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>HORARIO:</Text>
+            <Text style={styles.infoValue}>
+              DOMINGOS DE 07:00 AM A 11:00 AM
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={[styles.infoLabel]}>NOMBRE:</Text>
+            <Text style={[styles.infoValue, { textTransform: 'uppercase' }]}>
+              {data.alumno.nombre}
+            </Text>
+          </View>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>FECHA:</Text>
-          <Text style={styles.infoValue}>{formatDate(data.fecha_pago)}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>LUGAR:</Text>
-          <Text style={styles.infoValue}>YAJALON, CHIAPAS</Text>
+        <View style={styles.infoColumn}>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>NOTA DE VENTA:</Text>
+            <Text style={styles.infoValue}>{data.nota_venta}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>FECHA:</Text>
+            <Text style={styles.infoValue}>{formatDate(data.fecha_pago)}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>LUGAR:</Text>
+            <Text style={styles.infoValue}>{location}</Text>
+          </View>
         </View>
       </View>
-    </View>
 
-    <View style={styles.table}>
-      <View style={styles.tableHeader}>
-        <Text style={styles.columnHeader}>DESCRIPCION</Text>
-        <Text style={styles.columnHeader}>P.UNIT</Text>
-        <Text style={styles.columnHeader}>IMPORTE</Text>
+      <View style={styles.table}>
+        <View style={styles.tableHeader}>
+          <Text style={styles.columnHeader}>DESCRIPCION</Text>
+          <Text style={styles.columnHeader}>P.UNIT</Text>
+          <Text style={styles.columnHeader}>IMPORTE</Text>
+        </View>
+        <View style={styles.tableRow}>
+          <Text style={styles.column}>
+            PAGO DE COLEGIATURA DEL MES DE {getMonthYear(data.fecha_pago)}
+          </Text>
+          <Text style={styles.column}>$250.00</Text>
+          <Text style={styles.column}>$250.00</Text>
+        </View>
       </View>
-      <View style={styles.tableRow}>
-        <Text style={styles.column}>
-          PAGO DE COLEGIATURA DEL MES DE {getMonthYear(data.fecha_pago)}
-        </Text>
-        <Text style={styles.column}>$250.00</Text>
-        <Text style={styles.column}>$250.00</Text>
-      </View>
-    </View>
 
-    <Text style={styles.total}>TOTAL: $250.00</Text>
-    <Text
-      style={[
-        styles.total,
-        { fontSize: 8, fontWeight: 'normal', marginTop: 2 }
-      ]}
-    >
-      DOCIENTOS CINCUENTA PESOS M.N /00.00
-    </Text>
-
-    <View style={styles.footer}>
-      <Text style={styles.footerText}>
-        SUS PAGOS DEBEN SER EFECTUADOS SEGÚN EL CALENDARIO DE PAGO QUE SE LE FUE
-        ENTREGADO. SE PAGARÁ MULTA DESPUES DE LA FECHA LIMITE.
+      <Text style={styles.total}>TOTAL: $250.00</Text>
+      <Text
+        style={[
+          styles.total,
+          { fontSize: 8, fontWeight: 'normal', marginTop: 2 }
+        ]}
+      >
+        DOCIENTOS CINCUENTA PESOS M.N /00.00
       </Text>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          SUS PAGOS DEBEN SER EFECTUADOS SEGÚN EL CALENDARIO DE PAGO QUE SE LE
+          FUE ENTREGADO. SE PAGARÁ MULTA DESPUES DE LA FECHA LIMITE.
+        </Text>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const PDF = ({ data }: PDFProps) => (
   <Document>
