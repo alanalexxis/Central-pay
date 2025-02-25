@@ -41,17 +41,11 @@ export default function TablePage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<MyFormDataPago[]>([]);
   const columns = createColumns();
-  const [lastNotaVenta, setLastNotaVenta] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       const pagos = await loadPagos();
       setData(pagos);
-      if (pagos.length > 0) {
-        const lastNota = pagos[pagos.length - 1].nota_venta;
-        setLastNotaVenta(lastNota);
-        console.log('Última nota_pago:', lastNota);
-      }
     }
     fetchData();
   }, []);
@@ -59,7 +53,7 @@ export default function TablePage() {
   const handleCreate = (newRecord: Omit<MyFormDataPago, 'id'>) => {
     const record = { ...newRecord, id: String(data.length + 1) };
     setData([...data, record]);
-    setLastNotaVenta(record.nota_venta); // Actualiza el estado de lastNotaVenta
+
     setIsDialogOpen(false);
   };
 
@@ -80,14 +74,6 @@ export default function TablePage() {
         toast.success('Pago eliminado con éxito.');
         const updatedData = data.filter((record) => record.idpago !== deleteId);
         setData(updatedData);
-
-        // Actualiza lastNotaVenta
-        if (updatedData.length > 0) {
-          const lastNota = updatedData[updatedData.length - 1].nota_venta;
-          setLastNotaVenta(lastNota);
-        } else {
-          setLastNotaVenta(null);
-        }
       } else {
         console.error('Error al eliminar el pago:', await res.text());
       }
@@ -121,14 +107,6 @@ export default function TablePage() {
         );
         setData(updatedData);
         toast.success('Pagos eliminados exitosamente.');
-
-        // Actualiza lastNotaVenta
-        if (updatedData.length > 0) {
-          const lastNota = updatedData[updatedData.length - 1].nota_venta;
-          setLastNotaVenta(lastNota);
-        } else {
-          setLastNotaVenta(null);
-        }
       } else {
         toast.error('Error al eliminar algunos pagos.');
       }
@@ -171,7 +149,6 @@ export default function TablePage() {
             <UserForm
               onSubmit={editingUser ? handleUpdate : handleCreate}
               initialData={editingUser}
-              lastNotaVenta={lastNotaVenta}
             />
           </div>
         </DialogContent>

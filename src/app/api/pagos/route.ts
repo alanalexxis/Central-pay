@@ -30,8 +30,32 @@ export async function POST(request: Request) {
     // Obtener el año actual dinámicamente
     const year = new Date().getFullYear();
 
-    // Obtener la última nota de venta
+    // Obtener los datos del alumno
+    const alumno = await prisma.alumno.findUnique({
+      where: { idalumno }
+    });
+
+    if (!alumno) {
+      return NextResponse.json(
+        {
+          message: 'Alumno no encontrado'
+        },
+        {
+          status: 404
+        }
+      );
+    }
+
+    // Determinar la sede
+    const sedeInicial = alumno.sede === 'Yajalón' ? 'Y' : 'T';
+
+    // Obtener la última nota de venta de la sede correspondiente
     const ultimoPago = await prisma.pago.findFirst({
+      where: {
+        nota_venta: {
+          startsWith: `${year}A-${sedeInicial}`
+        }
+      },
       orderBy: {
         nota_venta: 'desc'
       }
@@ -39,10 +63,10 @@ export async function POST(request: Request) {
 
     // Generar la nueva nota de venta
     const ultimoNumero = ultimoPago
-      ? parseInt(ultimoPago.nota_venta.split('-Y')[1])
+      ? parseInt(ultimoPago.nota_venta.split('-')[1].substring(1))
       : 0;
     const nuevoNumero = (ultimoNumero + 1).toString().padStart(3, '0');
-    const nuevaNotaVenta = `${year}A-Y${nuevoNumero}`;
+    const nuevaNotaVenta = `${year}A-${sedeInicial}${nuevoNumero}`;
 
     // Crear el pago y obtener los datos del alumno relacionado
     const nuevoPago = await prisma.pago.create({

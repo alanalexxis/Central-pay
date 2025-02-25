@@ -29,13 +29,15 @@ const formSchema = z.object({
 interface MyFormProps {
   onSubmit: (data: MyFormDataPago) => void;
   initialData?: MyFormDataPago | null;
-  lastNotaVenta?: string | null;
 }
 
-function incrementarNotaVenta(notaVenta: string | null): string {
-  if (!notaVenta) return '';
+function incrementarNotaVenta(notaVenta: string | null, sede: string): string {
+  if (!notaVenta) {
+    const year = new Date().getFullYear();
+    return `${year}A-${sede}001`;
+  }
 
-  const match = notaVenta.match(/(\d{4}A-Y)(\d{3})/);
+  const match = notaVenta.match(new RegExp(`(\\d{4}A-${sede})(\\d{3})`));
   if (!match) return notaVenta;
 
   const prefix = match[1];
@@ -45,11 +47,7 @@ function incrementarNotaVenta(notaVenta: string | null): string {
   return `${prefix}${incrementedNumber}`;
 }
 
-export default function MyForm({
-  onSubmit,
-  initialData,
-  lastNotaVenta
-}: MyFormProps) {
+export default function MyForm({ onSubmit, initialData }: MyFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
@@ -58,12 +56,33 @@ export default function MyForm({
     }
   });
 
-  const incrementedNotaVenta = incrementarNotaVenta(lastNotaVenta);
   const [selectedUser, setSelectedUser] = useState<string>('');
+  const [incrementedNotaVenta, setIncrementedNotaVenta] = useState<string>('');
 
   useEffect(() => {
+    async function fetchNotaVenta(idalumno: string) {
+      const res = await fetch(`/api/alumnos/${idalumno}`);
+      const alumno = await res.json();
+      const sede = alumno.sede === 'Yajalón' ? 'Y' : 'T';
+
+      const resPago = await fetch(`/api/pagos`);
+      const pagos = await resPago.json();
+      const ultimoPago = pagos
+        .filter((pago: any) =>
+          pago.nota_venta.startsWith(`${new Date().getFullYear()}A-${sede}`)
+        )
+        .sort((a: any, b: any) => b.nota_venta.localeCompare(a.nota_venta))[0];
+      const nuevaNotaVenta = incrementarNotaVenta(
+        ultimoPago?.nota_venta || null,
+        sede
+      );
+
+      setIncrementedNotaVenta(nuevaNotaVenta);
+    }
+
     if (selectedUser) {
       form.setValue('idalumno', Number(selectedUser));
+      fetchNotaVenta(selectedUser);
     }
   }, [selectedUser, form]);
 
