@@ -126,14 +126,12 @@ const getLocation = (notaVenta: string) => {
   if (notaVenta.includes('Y')) {
     return {
       location: 'YAJALÓN, CHIAPAS',
-
       cp: '29930',
       tel: '9196714330'
     };
   } else if (notaVenta.includes('T')) {
     return {
       location: 'TILA, CHIAPAS',
-
       cp: '29910',
       tel: '9191293658'
     };

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { AlertDemo } from '@/components/AlertDemo';
 import { useEffect, useState } from 'react';
-import AlertDestructive from '@/components/AlertError';
+import AlertDestructive from '@/components/AlertDemo copy';
 
 export function RegisterForm({
   className,
