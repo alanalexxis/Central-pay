@@ -53,6 +53,14 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'Inventario',
+    url: '/dashboard/inventario',
+    icon: 'users',
+    shortcut: ['a', 'a'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
     title: 'Tablero',
     url: '/dashboard/tablero',
     icon: 'kanban',

@@ -33,3 +33,10 @@ model usuario {
     nombre     String  @db.VarChar(200)
     imagen     String? @db.VarChar(255) // Campo para la URL de la imagen
 }
+
+model inventario {
+    idinventario Int     @id @default(autoincrement())
+    nombre       String  @db.VarChar(200)
+    detalles     String? @db.VarChar(200)
+    estado       String  @db.VarChar(200)
+}

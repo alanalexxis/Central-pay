@@ -3,7 +3,8 @@ CREATE TABLE `alumno` (
     `idalumno` INTEGER NOT NULL AUTO_INCREMENT,
     `nombre` VARCHAR(200) NOT NULL,
     `telefono` VARCHAR(45) NOT NULL,
-    `fecha_nacimiento` DATE NOT NULL,
+    `fecha_nacimiento` VARCHAR(45) NOT NULL,
+    `sede` VARCHAR(45) NOT NULL,
 
     PRIMARY KEY (`idalumno`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -25,9 +26,20 @@ CREATE TABLE `usuario` (
     `correo` VARCHAR(200) NOT NULL,
     `contrasena` VARCHAR(191) NOT NULL,
     `nombre` VARCHAR(200) NOT NULL,
+    `imagen` VARCHAR(255) NULL,
 
     UNIQUE INDEX `usuario_correo_key`(`correo`),
     PRIMARY KEY (`idusuario`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `inventario` (
+    `idinventario` INTEGER NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(200) NOT NULL,
+    `detalles` VARCHAR(200) NULL,
+    `estado` VARCHAR(200) NOT NULL,
+
+    PRIMARY KEY (`idinventario`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
