@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MyFormDataPago } from '@/../types/table';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import PDF from '../PDF';
+
 import PDFDocument from '../PDFINS';
 
 interface ColumnActions {
@@ -82,7 +82,7 @@ export const createColumns = (): ColumnDef<MyFormDataPago>[] => {
                   loading ? (
                     <span>Generando factura...</span>
                   ) : (
-                    <span>Generar factura de pago ins</span>
+                    <span>Generar factura de pago</span>
                   )
                 }
               </PDFDownloadLink>

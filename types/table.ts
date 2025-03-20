@@ -18,5 +18,12 @@ export interface MyFormDataPago {
   nota_venta: string;
   alumno: {
     nombre: string;
+    sexo: string;
+    fecha_nacimiento: string;
+    escolaridad: string;
+    domicilio: string;
+    barrio: string;
+    telefono: string;
+    tutor: string;
   };
 }
