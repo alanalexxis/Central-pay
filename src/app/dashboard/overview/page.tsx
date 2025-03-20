@@ -85,13 +85,19 @@ export default function DashboardPage() {
 
   const totalAlumnos = alumnos.length;
   const totalPagos = pagos.length;
-  const ingresosTotales = totalPagos * 250;
   const { data: session } = useSession();
   const currentMonth = new Date().getMonth();
-  const pagosMesActual = chartData[currentMonth]?.total / 250 || 0;
   const { name } = useProfileStore();
   const firstName = (name || session.user?.name)?.split(' ')[0] || 'Usuario';
+  const ingresosTotales = pagos.reduce((total, pago) => {
+    return total + (pago.tipo_pago === 'Inscripción' ? 450 : 250);
+  }, 0);
 
+  const pagosMesActual = pagos
+    .filter((pago) => new Date(pago.fecha_pago).getMonth() === currentMonth)
+    .reduce((total, pago) => {
+      return total + (pago.tipo_pago === 'Inscripción' ? 450 : 250);
+    }, 0);
   if (isLoading) {
     return (
       <div className='flex h-screen items-center justify-center'>
@@ -118,10 +124,15 @@ export default function DashboardPage() {
           />
           <StatCard
             title={<span className='text-lg font-bold'>Pagos este mes</span>}
-            value={pagosMesActual}
-            description={`$${pagosMesActual * 250} ingresados este mes`}
+            value={
+              pagos.filter(
+                (pago) => new Date(pago.fecha_pago).getMonth() === currentMonth
+              ).length
+            }
+            description={`$${pagosMesActual.toLocaleString()} ingresados este mes`}
             icon={<CalendarIcon className='h-4 w-4 text-primary' />}
           />
+
           <StatCard
             title={<span className='text-lg font-bold'>Total de pagos</span>}
             value={totalPagos}
@@ -162,13 +173,50 @@ export default function DashboardPage() {
                       tickFormatter={(value) => `$${value}`}
                     />
                     <Tooltip
-                      contentStyle={{
-                        background: 'white',
-                        border: '1px solid #ccc'
+                      content={({ label, payload }) => {
+                        if (!payload || payload.length === 0) return null;
+
+                        const total = payload.reduce(
+                          (acc, item) => acc + (item.value || 0),
+                          0
+                        );
+
+                        return (
+                          <div className='rounded-md border border-gray-300 bg-white p-2 shadow-md'>
+                            <p className='font-bold text-primary'>
+                              Total: ${total.toLocaleString()}
+                            </p>
+                            {payload.map((entry, index) => (
+                              <p
+                                key={index}
+                                className={`text-sm font-medium`}
+                                style={{
+                                  color:
+                                    entry.name === 'Inscripciones'
+                                      ? '#dc2626'
+                                      : '#2563eb'
+                                }} // Rojo para Inscripciones, Azul para Colegiaturas
+                              >
+                                {entry.name}: ${entry.value?.toLocaleString()}
+                              </p>
+                            ))}
+                          </div>
+                        );
                       }}
-                      formatter={(value) => [`$${value}`, 'Ingresos']}
                     />
-                    <Bar dataKey='total' fill='#3b82f6' radius={[4, 4, 0, 0]} />
+
+                    <Bar
+                      dataKey='inscripciones'
+                      fill='#f87171'
+                      radius={[4, 4, 0, 0]}
+                      name='Inscripciones'
+                    />
+                    <Bar
+                      dataKey='colegiaturas'
+                      fill='#3b82f6'
+                      radius={[4, 4, 0, 0]}
+                      name='Colegiaturas'
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -199,7 +247,9 @@ export default function DashboardPage() {
                       <TableCell>
                         {formatToMexicoCity(pago.fecha_pago)}
                       </TableCell>
-                      <TableCell className='text-primary'>$250</TableCell>
+                      <TableCell className='text-primary'>
+                        ${pago.tipo_pago === 'Inscripción' ? 450 : 250}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -250,14 +300,25 @@ function processPayments(pagos: Pago[]) {
         date.toLocaleString('en-US', { timeZone: 'America/Mexico_City' })
       );
       const month = mexicoCityDate.getMonth();
-      acc[month] = (acc[month] || 0) + 250; // Assuming each payment is $250
+
+      if (!acc[month]) {
+        acc[month] = { inscripciones: 0, colegiaturas: 0 };
+      }
+
+      if (pago.tipo_pago === 'Inscripción') {
+        acc[month].inscripciones += 450;
+      } else {
+        acc[month].colegiaturas += 250;
+      }
+
       return acc;
     },
-    {} as Record<number, number>
+    {} as Record<number, { inscripciones: number; colegiaturas: number }>
   );
 
   return monthNames.map((name, index) => ({
     name,
-    total: pagosPorMes[index] || 0
+    inscripciones: pagosPorMes[index]?.inscripciones || 0,
+    colegiaturas: pagosPorMes[index]?.colegiaturas || 0
   }));
 }
