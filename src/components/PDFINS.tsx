@@ -486,8 +486,16 @@ const getLocation = (notaVenta: string) => {
   }
   return { location: '', ciudad: '' };
 };
-const formatFechaNacimiento = (fecha: string) => {
-  const [dia, mes, año] = fecha.split('/'); // Intercambiamos el orden
+const formatFechaNacimiento = (fecha?: string) => {
+  if (!fecha) return 'Fecha inválida'; // Manejo si es undefined o vacío
+
+  const partes = fecha.split('/');
+  if (partes.length !== 3) return 'Formato inválido'; // Verifica estructura correcta
+
+  const [dia, mes, año] = partes.map((p) => parseInt(p, 10)); // Convierte a número
+
+  if (isNaN(dia) || isNaN(mes) || isNaN(año)) return 'Fecha inválida'; // Verifica que sean números
+
   const meses = [
     'enero',
     'febrero',
@@ -502,8 +510,12 @@ const formatFechaNacimiento = (fecha: string) => {
     'noviembre',
     'diciembre'
   ];
-  return `${parseInt(dia)} de ${meses[parseInt(mes) - 1]} de ${año}`;
+
+  if (mes < 1 || mes > 12) return 'Mes inválido'; // Verifica mes válido
+
+  return `${dia} de ${meses[mes - 1]} de ${año}`;
 };
+
 const formatFechaPago = (fecha: string) => {
   const [fechaPart] = fecha.split(' '); // Separamos la fecha de la hora
   const [año, mes, dia] = fechaPart.split('-'); // Extraemos los valores
