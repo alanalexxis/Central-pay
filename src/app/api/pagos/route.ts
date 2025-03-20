@@ -25,7 +25,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { idalumno } = await request.json();
+    const { idalumno, tipo_pago } = await request.json();
 
     // Obtener el año actual dinámicamente
     const year = new Date().getFullYear();
@@ -72,7 +72,8 @@ export async function POST(request: Request) {
     const nuevoPago = await prisma.pago.create({
       data: {
         idalumno,
-        nota_venta: nuevaNotaVenta
+        nota_venta: nuevaNotaVenta,
+        tipo_pago
       },
       include: {
         alumno: true // Incluye los datos del alumno

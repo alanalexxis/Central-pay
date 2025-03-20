@@ -4,7 +4,10 @@ import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { type Alumno, searchAllUsers } from '@/components/tabla-pagos/action';
+import {
+  type Alumno,
+  searchAllUsers
+} from '@/components/tabla-pagos-ins/action';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -24,8 +27,7 @@ import { MapPin } from 'lucide-react';
 const formSchema = z.object({
   id: z.string().optional(),
   idalumno: z.preprocess((val) => Number(val), z.number().positive()),
-  nota_venta: z.string().optional(),
-  tipo_pago: z.string().default('Colegiatura')
+  nota_venta: z.string().optional()
 });
 
 interface MyFormProps {
@@ -54,8 +56,7 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       idalumno: initialData?.idalumno ?? 0,
-      nota_venta: '',
-      tipo_pago: 'Colegiatura'
+      nota_venta: ''
     }
   });
 

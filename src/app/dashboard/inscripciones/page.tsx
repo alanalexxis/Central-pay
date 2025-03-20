@@ -6,7 +6,7 @@ import { searchParamsCache, serialize } from '@/lib/searchparams';
 
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import TablaPagos from '@/components/tabla-pagos/tablaPagos';
+import TablaPagos from '@/components/tabla-pagos-ins/tablaPagos';
 
 export const metadata = {
   title: 'Dashboard: Inscripciones'
