@@ -45,7 +45,10 @@ export default function TablePage() {
   useEffect(() => {
     async function fetchData() {
       const pagos = await loadPagos();
-      setData(pagos);
+      const filteredPagos = pagos.filter(
+        (pago: MyFormDataPago) => pago.tipo_pago === 'Inscripción'
+      );
+      setData(filteredPagos);
     }
     fetchData();
   }, []);

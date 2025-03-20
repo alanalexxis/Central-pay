@@ -26,8 +26,12 @@ import { MapPin } from 'lucide-react';
 
 const formSchema = z.object({
   id: z.string().optional(),
-  idalumno: z.preprocess((val) => Number(val), z.number().positive()),
-  nota_venta: z.string().optional()
+  idalumno: z.preprocess(
+    (val) => (val === '' ? undefined : val), // Si el valor es vacío, lo convierte en undefined
+    z.number().positive({ message: 'Seleccione un alumno' }).optional() // Mensaje de error
+  ),
+  nota_venta: z.string().optional(),
+  tipo_pago: z.string().default('Inscripción')
 });
 
 interface MyFormProps {
@@ -35,58 +39,19 @@ interface MyFormProps {
   initialData?: MyFormDataPago | null;
 }
 
-function incrementarNotaVenta(notaVenta: string | null, sede: string): string {
-  if (!notaVenta) {
-    const year = new Date().getFullYear();
-    return `${year}A-${sede}001`;
-  }
-
-  const match = notaVenta.match(new RegExp(`(\\d{4}A-${sede})(\\d{3})`));
-  if (!match) return notaVenta;
-
-  const prefix = match[1];
-  const number = Number.parseInt(match[2], 10) + 1;
-  const incrementedNumber = number.toString().padStart(3, '0');
-
-  return `${prefix}${incrementedNumber}`;
-}
-
 export default function MyForm({ onSubmit, initialData }: MyFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      idalumno: initialData?.idalumno ?? 0,
-      nota_venta: ''
+      idalumno: initialData?.idalumno ?? 0
     }
   });
 
   const [selectedUser, setSelectedUser] = useState<string>('');
-  const [incrementedNotaVenta, setIncrementedNotaVenta] = useState<string>('');
 
   useEffect(() => {
-    async function fetchNotaVenta(idalumno: string) {
-      const res = await fetch(`/api/alumnos/${idalumno}`);
-      const alumno = await res.json();
-      const sede = alumno.sede === 'Yajalón' ? 'Y' : 'T';
-
-      const resPago = await fetch(`/api/pagos`);
-      const pagos = await resPago.json();
-      const ultimoPago = pagos
-        .filter((pago: any) =>
-          pago.nota_venta.startsWith(`${new Date().getFullYear()}A-${sede}`)
-        )
-        .sort((a: any, b: any) => b.nota_venta.localeCompare(a.nota_venta))[0];
-      const nuevaNotaVenta = incrementarNotaVenta(
-        ultimoPago?.nota_venta || null,
-        sede
-      );
-
-      setIncrementedNotaVenta(nuevaNotaVenta);
-    }
-
     if (selectedUser) {
       form.setValue('idalumno', Number(selectedUser));
-      fetchNotaVenta(selectedUser);
     }
   }, [selectedUser, form]);
 
@@ -119,12 +84,6 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
 
   return (
     <Form {...form}>
-      <div className='mb-4 flex items-center justify-between'>
-        <FormLabel></FormLabel>
-        <Badge variant='secondary' className='px-3 py-1 text-lg'>
-          {incrementedNotaVenta}
-        </Badge>
-      </div>
       <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-12'>
         <div className='space-y-4'>
           <FormField

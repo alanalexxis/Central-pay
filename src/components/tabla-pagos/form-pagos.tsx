@@ -23,7 +23,10 @@ import { MapPin } from 'lucide-react';
 
 const formSchema = z.object({
   id: z.string().optional(),
-  idalumno: z.preprocess((val) => Number(val), z.number().positive()),
+  idalumno: z.preprocess(
+    (val) => (val === '' ? undefined : val), // Si el valor es vacío, lo convierte en undefined
+    z.number().positive({ message: 'Seleccione un alumno' }).optional() // Mensaje de error
+  ),
   nota_venta: z.string().optional(),
   tipo_pago: z.string().default('Colegiatura')
 });
