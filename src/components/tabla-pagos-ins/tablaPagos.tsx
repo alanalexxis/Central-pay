@@ -53,11 +53,21 @@ export default function TablePage() {
     fetchData();
   }, []);
 
-  const handleCreate = (newRecord: Omit<MyFormDataPago, 'id'>) => {
-    const record = { ...newRecord, id: String(data.length + 1) };
-    setData([...data, record]);
+  const handleCreate = async (newRecord: Omit<MyFormDataPago, 'id'>) => {
+    try {
+      const res = await fetch('/api/pagos');
+      if (!res.ok) throw new Error('Error al obtener pagos');
 
-    setIsDialogOpen(false);
+      const pagos = await res.json();
+      const filteredPagos = pagos.filter(
+        (pago: MyFormDataPago) => pago.tipo_pago === 'Inscripción'
+      );
+
+      setData(filteredPagos); // Asegura que los datos están actualizados
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Error al actualizar la lista de pagos:', error);
+    }
   };
 
   const confirmDelete = (idpago: string) => {
