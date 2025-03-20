@@ -14,12 +14,18 @@ model alumno {
     fecha_nacimiento String @db.VarChar(45)
     sede             String @db.VarChar(45)
     pago             pago[]
+    sexo             String @db.VarChar(45)
+    domicilio        String @db.VarChar(200)
+    barrio           String @db.VarChar(200)
+    tutor            String @db.VarChar(200)
+    escolaridad      String @db.VarChar(200)
 }
 
 model pago {
     idpago     Int      @id @default(autoincrement())
     idalumno   Int
     fecha_pago DateTime @default(now()) @db.DateTime
+    tipo_pago  String   @db.VarChar(45)
     nota_venta String   @db.VarChar(45)
     alumno     alumno   @relation(fields: [idalumno], references: [idalumno], onDelete: NoAction, onUpdate: NoAction, map: "fk_pago_alumno")
 
@@ -37,6 +43,6 @@ model usuario {
 model inventario {
     idinventario Int     @id @default(autoincrement())
     nombre       String  @db.VarChar(200)
-    detalles     String? @db.VarChar(200)
+    detalles     String? @db.VarChar(400)
     estado       String  @db.VarChar(200)
 }

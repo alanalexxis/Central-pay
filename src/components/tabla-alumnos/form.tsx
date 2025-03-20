@@ -25,15 +25,19 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { es } from 'date-fns/locale';
 
 const formSchema = z.object({
   id: z.string().optional(),
   nombre: z.string().nonempty('El campo nombre no puede estar vacío'),
   telefono: z.string().nonempty('El campo teléfono no puede estar vacío'),
   fecha_nacimiento: z.string().nonempty('Selecciona una fecha de nacimiento'),
-  sede: z.string({
-    required_error: 'Selecciona una sede.'
-  })
+  sexo: z.string().nonempty('Seleccione un género'),
+  domicilio: z.string().nonempty('El campo domicilio no puede estar vacío'),
+  barrio: z.string().nonempty('El campo barrio no puede estar vacío'),
+  tutor: z.string().nonempty('El campo tutor no puede estar vacío'),
+  escolaridad: z.string().nonempty('El campo escolaridad no puede estar vacío'),
+  sede: z.string().nonempty('Seleccione una sede')
 });
 
 interface MyFormProps {
@@ -48,7 +52,12 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
       nombre: '',
       telefono: '',
       fecha_nacimiento: '',
-      sede: ''
+      sede: '',
+      sexo: '',
+      domicilio: '',
+      barrio: '',
+      tutor: '',
+      escolaridad: ''
     }
   });
 
@@ -81,95 +90,223 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className='mx-auto max-w-3xl space-y-8 py-10'
-      >
-        <div className='grid grid-cols-12 gap-4'>
-          <div className='col-span-6'>
-            <FormField
-              control={form.control}
-              name='nombre'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Juan Pérez' type='text' {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Introduce el nombre del alumno.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className='col-span-6'>
-            <FormField
-              control={form.control}
-              name='telefono'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Teléfono</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Ejemplo: 5551234567'
-                      type='text'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Introduce el teléfono del alumno.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
-        <FormField
-          control={form.control}
-          name='fecha_nacimiento'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Fecha de nacimiento</FormLabel>
-              <DateTimePickerV2
-                onChange={(date) => field.onChange(date)}
-                initialDate={field.value}
+    <div className='h-[80vh] overflow-y-auto'>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className='mx-auto max-w-3xl space-y-8 py-10'
+        >
+          <div className='grid grid-cols-12 gap-4'>
+            <div className='col-span-6'>
+              <FormField
+                control={form.control}
+                name='nombre'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input placeholder='Juan Pérez' type='text' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Introduce el nombre del alumno.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <FormDescription>
-                Selecciona la fecha de nacimiento del alumno.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='sede'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sede</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Selecciona una sede para el alumno' />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value='Yajalón'>Yajalón</SelectItem>
-                  <SelectItem value='Tila'>Tila</SelectItem>
-                </SelectContent>
-              </Select>
+            </div>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type='submit'>{initialData ? 'Actualizar' : 'Guardar'}</Button>
-      </form>
-    </Form>
+            <div className='col-span-6'>
+              <FormField
+                control={form.control}
+                name='telefono'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Teléfono</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Ejemplo: 5551234567'
+                        type='text'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Introduce el teléfono del alumno.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <div className='grid grid-cols-12 gap-4'>
+            <div className='col-span-6'>
+              <FormField
+                control={form.control}
+                name='sexo'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Género</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Selecciona un género' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value='Masculino'>Masculino</SelectItem>
+                        <SelectItem value='Femenino'>Femenino</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <FormField
+            control={form.control}
+            name='fecha_nacimiento'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Fecha de nacimiento</FormLabel>
+                <DateTimePickerV2
+                  onChange={(date) => field.onChange(date)}
+                  initialDate={field.value}
+                />
+                <FormDescription>
+                  Selecciona la fecha de nacimiento del alumno.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className='grid grid-cols-12 gap-4'>
+            <div className='col-span-6'>
+              <FormField
+                control={form.control}
+                name='domicilio'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dirección</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Calle Vicente Guerrero #28'
+                        type='text'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Introduce la dirección del alumno.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className='col-span-6'>
+              <FormField
+                control={form.control}
+                name='barrio'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Barrio</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Barrio centro'
+                        type='text'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Introduce el barrio del alumno.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          <FormField
+            control={form.control}
+            name='sede'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Municipio</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Selecciona un municipio para el alumno' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value='Yajalón'>Yajalón</SelectItem>
+                    <SelectItem value='Tila'>Tila</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className='grid grid-cols-12 gap-4'>
+            <div className='col-span-6'>
+              <FormField
+                control={form.control}
+                name='escolaridad'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Escolaridad</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Preparatoria'
+                        type='text'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Introduce la escolaridad del alumno.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className='col-span-6'>
+              <FormField
+                control={form.control}
+                name='tutor'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tutor</FormLabel>
+                    <FormControl>
+                      <Input placeholder='Juán Pérez' type='text' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Introduce el tutor del alumno.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          <Button type='submit'>
+            {initialData ? 'Actualizar' : 'Guardar'}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 }

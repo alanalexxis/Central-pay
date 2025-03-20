@@ -9,7 +9,7 @@ import { Suspense } from 'react';
 import TablaPagos from '@/components/tabla-pagos/tablaPagos';
 
 export const metadata = {
-  title: 'Dashboard: Pagos'
+  title: 'Dashboard: Colegiaturas'
 };
 
 type pageProps = {
@@ -29,8 +29,8 @@ export default async function Page(props: pageProps) {
       <div className='flex flex-1 flex-col space-y-4'>
         <div className='flex items-start justify-between'>
           <Heading
-            title='Pagos'
-            description='Administra los pagos de alumnos de manera fácil y eficiente, con registro, búsqueda y control en tiempo real..'
+            title='Colegiaturas'
+            description='Administra los pagos de colegiaturas de manera fácil y eficiente, con registro, búsqueda y control en tiempo real..'
           />
         </div>
         <Separator />

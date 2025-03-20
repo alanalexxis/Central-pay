@@ -1,4 +1,6 @@
 export interface MyFormData {
+  barrio: any;
+  domicilio: any;
   idalumno: string;
   nombre: string;
   telefono: string;

@@ -28,6 +28,15 @@ export const createColumns = (): ColumnDef<MyFormData>[] => {
       header: 'Nombre'
     },
     {
+      id: 'direccion',
+      header: 'Dirección',
+      accessorFn: (row) => `${row.domicilio}, ${row.barrio}`
+    },
+    {
+      accessorKey: 'sede',
+      header: 'Sede'
+    },
+    {
       accessorKey: 'telefono',
       header: 'Teléfono'
     },
@@ -36,8 +45,8 @@ export const createColumns = (): ColumnDef<MyFormData>[] => {
       header: 'Fecha de nacimiento'
     },
     {
-      accessorKey: 'sede',
-      header: 'Sede'
+      accessorKey: 'tutor',
+      header: 'Tutor'
     }
   ];
 
