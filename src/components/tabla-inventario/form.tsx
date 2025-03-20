@@ -15,9 +15,6 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { MyFormData } from '@/../types/table';
-import { DateTimePickerV2 } from '../calendar-date.picker';
 import {
   Select,
   SelectContent,
@@ -25,20 +22,19 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { MyFormDataInventario } from '@/../types/table';
 
 const formSchema = z.object({
   id: z.string().optional(),
   nombre: z.string().nonempty('El campo nombre no puede estar vacío'),
-  telefono: z.string().nonempty('El campo teléfono no puede estar vacío'),
-  fecha_nacimiento: z.string().nonempty('Selecciona una fecha de nacimiento'),
-  sede: z.string({
-    required_error: 'Selecciona una sede.'
-  })
+  detalles: z.string().nonempty('El campo detalles no puede estar vacío'),
+  estado: z.string().nonempty('Selecciona un estado del objeto')
 });
 
 interface MyFormProps {
-  onSubmit: (data: MyFormData) => void;
-  initialData?: MyFormData | null;
+  onSubmit: (data: MyFormDataInventario) => void;
+  initialData?: MyFormDataInventario | null;
 }
 
 export default function MyForm({ onSubmit, initialData }: MyFormProps) {
@@ -46,19 +42,18 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       nombre: '',
-      telefono: '',
-      fecha_nacimiento: '',
-      sede: ''
+      detalles: '',
+      estado: ''
     }
   });
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
       // Asegurar que el ID sea tomado correctamente
-      const id = values.idalumno || initialData?.idalumno;
+      const id = values.idinventario || initialData?.idinventario;
       const method = id ? 'PUT' : 'POST';
 
-      const res = await fetch(`/api/alumnos${id ? `/${id}` : ''}`, {
+      const res = await fetch(`/api/inventarios${id ? `/${id}` : ''}`, {
         method,
         headers: {
           'Content-Type': 'application/json'
@@ -95,10 +90,10 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder='Juan Pérez' type='text' {...field} />
+                    <Input placeholder='Desarmador' type='text' {...field} />
                   </FormControl>
                   <FormDescription>
-                    Introduce el nombre del alumno.
+                    Introduce el nombre del objeto.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -109,65 +104,54 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
           <div className='col-span-6'>
             <FormField
               control={form.control}
-              name='telefono'
+              name='detalles'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Teléfono</FormLabel>
+                  <FormLabel>Detalles</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Ejemplo: 5551234567'
+                      placeholder='Desarmador de punta plana de 6 pulgadas'
                       type='text'
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    Introduce el teléfono del alumno.
+                    Introduce los detalles del objeto
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-        </div>
-        <FormField
-          control={form.control}
-          name='fecha_nacimiento'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Fecha de nacimiento</FormLabel>
-              <DateTimePickerV2
-                onChange={(date) => field.onChange(date)}
-                initialDate={field.value}
-              />
-              <FormDescription>
-                Selecciona la fecha de nacimiento del alumno.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='sede'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Sede</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Selecciona una sede para el alumno' />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value='Yajalón'>Yajalón</SelectItem>
-                  <SelectItem value='Tila'>Tila</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className='col-span-8'>
+            <FormField
+              control={form.control}
+              name='estado'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Selecciona un estado para el objeto' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value='Bueno'>Bueno</SelectItem>
+                      <SelectItem value='Regular'>Regular</SelectItem>
+                      <SelectItem value='Malo'>Malo</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
         <Button type='submit'>{initialData ? 'Actualizar' : 'Guardar'}</Button>
       </form>
     </Form>

@@ -4,6 +4,12 @@ export interface MyFormData {
   telefono: string;
   fecha_nacimiento: String;
 }
+export interface MyFormDataInventario {
+  idinventario: string;
+  nombre: string;
+  detalles: string;
+  estado: string;
+}
 export interface MyFormDataPago {
   idpago: string;
   fecha_pago: string;

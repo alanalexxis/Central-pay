@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Circle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,15 +10,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { MyFormData } from '@/../types/table';
+import { MyFormDataInventario } from '@/../types/table';
 
 interface ColumnActions {
-  onEdit?: (data: MyFormData) => void;
+  onEdit?: (data: MyFormDataInventario) => void;
   onDelete?: (id: string) => void;
 }
 
-export const createColumns = (): ColumnDef<MyFormData>[] => {
-  const columns: ColumnDef<MyFormData>[] = [
+export const createColumns = (): ColumnDef<MyFormDataInventario>[] => {
+  const columns: ColumnDef<MyFormDataInventario>[] = [
     {
       accessorKey: 'idinventario',
       header: 'ID'
@@ -33,7 +33,20 @@ export const createColumns = (): ColumnDef<MyFormData>[] => {
     },
     {
       accessorKey: 'estado',
-      header: 'Estado'
+      header: 'Estado',
+      cell: ({ row }) => {
+        const estado = row.original.estado;
+        let color = 'text-green-500';
+        if (estado === 'Regular') color = 'text-yellow-500';
+        if (estado === 'Malo') color = 'text-red-500';
+
+        return (
+          <div className='flex items-center gap-2'>
+            <Circle className={color} size={16} />
+            <span>{estado}</span>
+          </div>
+        );
+      }
     }
   ];
 
@@ -61,7 +74,7 @@ export const createColumns = (): ColumnDef<MyFormData>[] => {
             )}
 
             {onDelete && (
-              <DropdownMenuItem onClick={() => onDelete(record.idalumno)}>
+              <DropdownMenuItem onClick={() => onDelete(record.idinventario)}>
                 Eliminar
               </DropdownMenuItem>
             )}

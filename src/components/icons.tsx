@@ -32,7 +32,8 @@ import {
   UserX2Icon,
   X,
   UsersRound,
-  CircleDollarSign
+  CircleDollarSign,
+  Hammer
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -68,6 +69,7 @@ export const Icons = {
   laptop: Laptop,
   users: UsersRound,
   pay: CircleDollarSign,
+  hammer: Hammer,
 
   gitHub: ({ ...props }: LucideProps) => (
     <svg

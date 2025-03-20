@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { createColumns } from '@/components/tabla-inventario/column';
-import { DataTable } from '@/components/tabla-alumnos/data-table';
-import { MyFormData } from '@/../types/table';
+import { DataTable } from '@/components/tabla-inventario/data-table';
+import { MyFormDataInventario } from '@/../types/table';
 import UserForm from '@/components/tabla-inventario/form';
 import {
   Dialog,
@@ -26,48 +26,52 @@ import {
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-async function loadAlumnos() {
-  const res = await fetch('/api/');
+async function loadInventarios() {
+  const res = await fetch('/api/inventarios');
   const data = await res.json();
   return data;
 }
 
 export default function TablePage() {
-  const [data, setData] = useState<MyFormData[]>([]);
-  const [editingUser, setEditingUser] = useState<MyFormData | null>(null);
+  const [data, setData] = useState<MyFormDataInventario[]>([]);
+  const [editingUser, setEditingUser] = useState<MyFormDataInventario | null>(
+    null
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
   const [isMultiDeleteDialogOpen, setIsMultiDeleteDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [selectedUsers, setSelectedUsers] = useState<MyFormData[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<MyFormDataInventario[]>(
+    []
+  );
   const columns = createColumns();
 
   useEffect(() => {
     async function fetchData() {
-      const alumnos = await loadAlumnos();
-      setData(alumnos);
+      const inventarios = await loadInventarios();
+      setData(inventarios);
     }
     fetchData();
   }, []);
 
-  const handleCreate = (newRecord: Omit<MyFormData, 'id'>) => {
+  const handleCreate = (newRecord: Omit<MyFormDataInventario, 'id'>) => {
     const record = { ...newRecord, id: String(data.length + 1) };
     setData([...data, record]);
     setIsDialogOpen(false);
   };
 
-  const handleUpdate = (updatedUser: MyFormData) => {
+  const handleUpdate = (updatedUser: MyFormDataInventario) => {
     setData(
       data.map((record) =>
-        record.idalumno === updatedUser.idalumno ? updatedUser : record
+        record.idinventario === updatedUser.idinventario ? updatedUser : record
       )
     );
     setIsDialogOpen(false);
     setEditingUser(null);
   };
 
-  const confirmDelete = (idalumno: string) => {
-    setDeleteId(idalumno);
+  const confirmDelete = (idinventario: string) => {
+    setDeleteId(idinventario);
     setIsAlertDialogOpen(true);
   };
 
@@ -75,35 +79,35 @@ export default function TablePage() {
     if (!deleteId) return;
 
     try {
-      const res = await fetch(`/api/alumnos/${deleteId}`, {
+      const res = await fetch(`/api/inventarios/${deleteId}`, {
         method: 'DELETE'
       });
 
       if (res.ok) {
-        toast.success('Alumno eliminado con éxito.');
-        setData(data.filter((record) => record.idalumno !== deleteId));
+        toast.success('Eliminado con éxito.');
+        setData(data.filter((record) => record.idinventario !== deleteId));
       } else {
-        console.error('Error al eliminar el alumno:', await res.text());
+        console.error('Error al eliminar:', await res.text());
       }
     } catch (error) {
-      console.error('Error al eliminar el alumno:', error);
+      console.error('Error al eliminar:', error);
     } finally {
       setIsAlertDialogOpen(false);
       setDeleteId(null);
     }
   };
 
-  const confirmMultiDelete = (users: MyFormData[]) => {
+  const confirmMultiDelete = (users: MyFormDataInventario[]) => {
     setSelectedUsers(users);
     setIsMultiDeleteDialogOpen(true);
   };
 
   const handlemultiDelete = async () => {
-    const userIds = selectedUsers.map((record) => record.idalumno);
+    const userIds = selectedUsers.map((record) => record.idinventario);
 
     try {
       const deletePromises = userIds.map((id) =>
-        fetch(`/api/alumnos/${id}`, {
+        fetch(`/api/inventarios/${id}`, {
           method: 'DELETE'
         })
       );
@@ -113,21 +117,23 @@ export default function TablePage() {
       const successfulDeletes = results.filter((res) => res.ok).length;
 
       if (successfulDeletes === userIds.length) {
-        setData(data.filter((record) => !userIds.includes(record.idalumno)));
-        toast.success('Alumnos eliminados exitosamente.');
+        setData(
+          data.filter((record) => !userIds.includes(record.idinventario))
+        );
+        toast.success('Eliminados exitosamente.');
       } else {
-        toast.error('Error al eliminar algunos alumnos.');
+        toast.error('Error al eliminar.');
       }
     } catch (error) {
-      console.error('Error al eliminar los alumnos:', error);
-      toast.error('Error al eliminar los alumnos.');
+      console.error('Error al eliminar:', error);
+      toast.error('Error al eliminar.');
     } finally {
       setIsMultiDeleteDialogOpen(false);
       setSelectedUsers([]);
     }
   };
 
-  const handleEdit = (record: MyFormData) => {
+  const handleEdit = (record: MyFormDataInventario) => {
     setEditingUser(record);
     setIsDialogOpen(true);
   };
@@ -144,14 +150,14 @@ export default function TablePage() {
           <DialogHeader>
             <DialogTitle>
               {editingUser
-                ? 'Editar datos del alumno'
-                : 'Registrar nuevo alumno'}
+                ? 'Editar datos del objeto'
+                : 'Registrar nuevo objeto'}
             </DialogTitle>
             <DialogDescription>
               Por favor, completa el siguiente formulario para{' '}
               {editingUser
-                ? 'actualizar los datos del alumno'
-                : 'registrar un nuevo alumno'}
+                ? 'actualizar los datos del objeto'
+                : 'registrar un nuevo objeto'}
               .
             </DialogDescription>
           </DialogHeader>
@@ -169,7 +175,7 @@ export default function TablePage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar eliminación</AlertDialogTitle>
             <AlertDialogDescription>
-              ¿Estás seguro de que deseas eliminar este alumno? Esta acción no
+              ¿Estás seguro de que deseas eliminar este objeto? Esta acción no
               se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -200,7 +206,7 @@ export default function TablePage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar eliminación múltiple</AlertDialogTitle>
             <AlertDialogDescription>
-              ¿Estás seguro de que deseas eliminar estos alumnos? Esta acción no
+              ¿Estás seguro de que deseas eliminar estos objetos? Esta acción no
               se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
