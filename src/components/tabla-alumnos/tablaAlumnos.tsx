@@ -50,30 +50,10 @@ export default function TablePage() {
     fetchData();
   }, []);
 
-  const handleCreate = async (newRecord: Omit<MyFormDataPago, 'id'>) => {
-    try {
-      const res = await fetch('/api/pagos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newRecord)
-      });
-
-      if (res.ok) {
-        const createdRecord = await res.json();
-        setData((prevData) => [...prevData, createdRecord]);
-        toast.success('Pago agregado con éxito.');
-      } else {
-        console.error('Error al agregar el pago:', await res.text());
-        toast.error('Error al agregar el pago.');
-      }
-    } catch (error) {
-      console.error('Error al agregar el pago:', error);
-      toast.error('Error al agregar el pago.');
-    } finally {
-      setIsDialogOpen(false);
-    }
+  const handleCreate = (newRecord: Omit<MyFormData, 'id'>) => {
+    const record = { ...newRecord, id: String(data.length + 1) };
+    setData([...data, record]);
+    setIsDialogOpen(false);
   };
 
   const handleUpdate = (updatedUser: MyFormData) => {
