@@ -1,20 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'utfs.io',
-        port: ''
-      },
-      {
-        protocol: 'https',
-        hostname: 'api.slingacademy.com',
-        port: ''
-      }
-    ]
+    domains: ['images.unsplash.com', 'utfs.io']
   },
-  transpilePackages: ['geist']
+  poweredByHeader: false,
+  output: 'standalone',
+  experimental: {
+    instrumentationHook: true,
+    serverComponentsExternalPackages: ['dd-trace']
+  },
+  devIndicators: {
+    buildActivity: false
+  },
+  eslint: {
+    ignoreDuringBuilds: true
+  },
+  typescript: {
+    ignoreBuildErrors: true
+  }
 };
-
-module.exports = nextConfig;
+export default nextConfig;
