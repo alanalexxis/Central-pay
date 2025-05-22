@@ -24,7 +24,7 @@ model alumno {
 model pago {
     idpago     Int      @id @default(autoincrement())
     idalumno   Int
-    fecha_pago DateTime @default(now()) @db.DateTime
+    fecha_pago DateTime @default(now()) @db.Timestamp(0)
     tipo_pago  String   @db.VarChar(45)
     nota_venta String   @db.VarChar(45)
     alumno     alumno   @relation(fields: [idalumno], references: [idalumno], onDelete: NoAction, onUpdate: NoAction, map: "fk_pago_alumno")
