@@ -18,7 +18,7 @@ CREATE TABLE `alumno` (
 CREATE TABLE `pago` (
     `idpago` INTEGER NOT NULL AUTO_INCREMENT,
     `idalumno` INTEGER NOT NULL,
-    `fecha_pago` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `fecha_pago` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `tipo_pago` VARCHAR(45) NOT NULL,
     `nota_venta` VARCHAR(45) NOT NULL,
 
