@@ -25,7 +25,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { idalumno, tipo_pago } = await request.json();
+    const { idalumno, tipo_pago, fecha_pago, fecha_inicio } =
+      await request.json();
 
     // Obtener el año actual dinámicamente
     const year = new Date().getFullYear();
@@ -73,7 +74,9 @@ export async function POST(request: Request) {
       data: {
         idalumno,
         nota_venta: nuevaNotaVenta,
-        tipo_pago
+        tipo_pago,
+        fecha_pago,
+        fecha_inicio
       },
       include: {
         alumno: true // Incluye los datos del alumno

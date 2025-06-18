@@ -15,6 +15,7 @@ export interface MyFormDataInventario {
 export interface MyFormDataPago {
   idpago: string;
   fecha_pago: string;
+  fecha_inicio: string;
   nota_venta: string;
   alumno: {
     nombre: string;

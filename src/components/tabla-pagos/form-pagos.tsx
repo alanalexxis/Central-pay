@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
+import { DateTimePickerV2 } from '../calendar-date.picker-pago';
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -28,7 +30,10 @@ const formSchema = z.object({
     z.number().positive({ message: 'Seleccione un alumno' }).optional() // Mensaje de error
   ),
   nota_venta: z.string().optional(),
-  tipo_pago: z.string().default('Colegiatura')
+  tipo_pago: z.string().default('Colegiatura'),
+  fecha_pago: z.string({
+    required_error: 'La fecha de pago es obligatoria'
+  })
 });
 
 interface MyFormProps {
@@ -129,6 +134,23 @@ export default function MyForm({ onSubmit, initialData }: MyFormProps) {
       </div>
       <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-12'>
         <div className='space-y-4'>
+          <FormField
+            control={form.control}
+            name='fecha_pago'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Fecha de pago de colegiatura</FormLabel>
+                <DateTimePickerV2
+                  onChange={(date) => field.onChange(date)}
+                  initialDate={field.value}
+                />
+                <FormDescription>
+                  Selecciona la fecha de pago de colegiatura.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name='idalumno'

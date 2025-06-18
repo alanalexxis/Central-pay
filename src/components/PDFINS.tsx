@@ -11,6 +11,7 @@ interface PDFProps {
   data: {
     fecha_pago: string;
     nota_venta: string;
+    fecha_inicio: string;
     alumno: {
       nombre: string;
       sexo: string;
@@ -506,7 +507,7 @@ const formatFechaNacimiento = (fecha: string) => {
 };
 const formatFechaPago = (fecha: string) => {
   const [fechaPart] = fecha.split(' '); // Separamos la fecha de la hora
-  const [año, mes, dia] = fechaPart.split('-'); // Extraemos los valores
+  const [dia, mes, año] = fechaPart.split('/'); // Extraemos los valores
 
   const meses = [
     'enero',
@@ -916,7 +917,7 @@ const PDFDocument = ({ data, style }: PDFProps & { style?: any }) => {
               <Text style={{ fontWeight: 'bold', marginBottom: 3 }}>
                 Fecha de inicio:
               </Text>
-              <Text>{formatFechaPago(data.fecha_pago)}</Text>
+              <Text>{formatFechaPago(data.fecha_inicio)}</Text>
             </View>
             <View style={styles.tableColLast}>
               <Text style={{ fontWeight: 'bold', marginBottom: 3 }}>

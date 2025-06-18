@@ -1,5 +1,6 @@
 'use client';
-
+import { parse } from 'date-fns';
+import { es } from 'date-fns/locale';
 import {
   Document,
   Page,
@@ -112,16 +113,10 @@ interface PDFProps {
   };
 }
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-};
-
 const getMonthYear = (dateString: string) => {
-  const date = new Date(dateString);
+  const date = parse(dateString, 'dd/MM/yyyy', new Date());
   return `${date.toLocaleString('es-ES', { month: 'long' }).toUpperCase()} ${date.getFullYear()}`;
 };
-
 const getLocation = (notaVenta: string) => {
   if (notaVenta.includes('Y')) {
     return {
@@ -192,7 +187,7 @@ const Receipt = ({ data, style }: PDFProps & { style?: any }) => {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>FECHA:</Text>
-            <Text style={styles.infoValue}>{formatDate(data.fecha_pago)}</Text>
+            <Text style={styles.infoValue}>{data.fecha_pago}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>LUGAR:</Text>
