@@ -2,6 +2,7 @@
   "name": "central-pay",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "author": {
     "name": "alanalexxis",
     "url": "https://github.com/alanalexxis"
