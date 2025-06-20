@@ -92,12 +92,18 @@ export default function DashboardPage() {
   const ingresosTotales = pagos.reduce((total, pago) => {
     return total + (pago.tipo_pago === 'Inscripción' ? 450 : 250);
   }, 0);
+  function parseFecha(fechaStr: string): Date {
+    const [dia, mes, año] = fechaStr.split('/').map(Number);
+    // Ojo: el mes en JavaScript es de 0 a 11
+    return new Date(año, mes - 1, dia);
+  }
 
   const pagosMesActual = pagos
-    .filter((pago) => new Date(pago.fecha_pago).getMonth() === currentMonth)
+    .filter((pago) => parseFecha(pago.fecha_pago).getMonth() === currentMonth)
     .reduce((total, pago) => {
       return total + (pago.tipo_pago === 'Inscripción' ? 450 : 250);
     }, 0);
+
   if (isLoading) {
     return (
       <div className='flex h-screen items-center justify-center'>
@@ -126,7 +132,8 @@ export default function DashboardPage() {
             title={<span className='text-lg font-bold'>Pagos este mes</span>}
             value={
               pagos.filter(
-                (pago) => new Date(pago.fecha_pago).getMonth() === currentMonth
+                (pago) =>
+                  parseFecha(pago.fecha_pago).getMonth() === currentMonth
               ).length
             }
             description={`$${pagosMesActual.toLocaleString()} ingresados este mes`}
@@ -244,9 +251,7 @@ export default function DashboardPage() {
                       <TableCell className='font-medium'>
                         {pago.alumno.nombre}
                       </TableCell>
-                      <TableCell>
-                        {formatToMexicoCity(pago.fecha_pago)}
-                      </TableCell>
+                      <TableCell>{pago.fecha_pago}</TableCell>
                       <TableCell className='text-primary'>
                         ${pago.tipo_pago === 'Inscripción' ? 450 : 250}
                       </TableCell>
@@ -292,14 +297,16 @@ function processPayments(pagos: Pago[]) {
     'Nov',
     'Dic'
   ];
+  function parseFecha(fechaStr: string): Date {
+    const [dia, mes, año] = fechaStr.split('/').map(Number);
+    // Ojo: el mes en JavaScript es de 0 a 11
+    return new Date(año, mes - 1, dia);
+  }
 
   const pagosPorMes = pagos.reduce(
     (acc, pago) => {
-      const date = new Date(pago.fecha_pago);
-      const mexicoCityDate = new Date(
-        date.toLocaleString('en-US', { timeZone: 'America/Mexico_City' })
-      );
-      const month = mexicoCityDate.getMonth();
+      const date = parseFecha(pago.fecha_pago); // ✅ usar parseFecha aquí
+      const month = date.getMonth();
 
       if (!acc[month]) {
         acc[month] = { inscripciones: 0, colegiaturas: 0 };
